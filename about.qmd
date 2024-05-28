@@ -1,0 +1,19 @@
+---
+title: "About"
+image: profile.jpg
+about:
+  template: jolla
+  links:
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/mehuljain22/
+    - icon: github
+      text: Github
+      href: https://github.com/mehulfollytobevice
+
+---
+
+# Thoughts, Code and Mischief 
+
+Welcome to Thoughts, Code and Mischief. A place to find interesting stuff on AI, ML and life. 
+
