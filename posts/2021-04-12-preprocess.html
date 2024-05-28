@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.554">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Mehul Jain">
+<meta name="dcterms.date" content="2021-04-12">
+<meta name="description" content="In this blog post, we learn about the fundamentals of preprocessing tabular data.">
+
+<title>Thoughts, Code and Mischief - The essentials of data preprocessing for tabular data</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Thoughts, Code and Mischief</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/mehulfollytobevice"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">The essentials of data preprocessing for tabular data</h1>
+                  <div>
+        <div class="description">
+          In this blog post, we learn about the fundamentals of preprocessing tabular data.
+        </div>
+      </div>
+                </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Mehul Jain </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">April 12, 2021</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#downloading-dataset-from-kaggle" id="toc-downloading-dataset-from-kaggle" class="nav-link active" data-scroll-target="#downloading-dataset-from-kaggle">Downloading dataset from Kaggle</a></li>
+  <li><a href="#exploring-the-data" id="toc-exploring-the-data" class="nav-link" data-scroll-target="#exploring-the-data">Exploring the data</a></li>
+  <li><a href="#the-essential-preprocessing-techniques" id="toc-the-essential-preprocessing-techniques" class="nav-link" data-scroll-target="#the-essential-preprocessing-techniques">The essential preprocessing techniques</a>
+  <ul class="collapse">
+  <li><a href="#label-encoding" id="toc-label-encoding" class="nav-link" data-scroll-target="#label-encoding">Label Encoding</a></li>
+  <li><a href="#one-hot-encoding" id="toc-one-hot-encoding" class="nav-link" data-scroll-target="#one-hot-encoding">One-hot encoding</a></li>
+  <li><a href="#imputation" id="toc-imputation" class="nav-link" data-scroll-target="#imputation">Imputation</a></li>
+  <li><a href="#standardization" id="toc-standardization" class="nav-link" data-scroll-target="#standardization">Standardization</a></li>
+  <li><a href="#normalization" id="toc-normalization" class="nav-link" data-scroll-target="#normalization">Normalization</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p>If you ask data scientists which part of the ML pipeline takes the most amount of time, they will probably tell you that it’s the data preprocessing stage. Ensuring your data is in the right form before you dump it into your ML/DL model is of paramount importance. If you feed in garbage to your model, you will get garbage as the output. In this blog post we will see some of the essential techniques that you can use to preprocess your data properly.</p>
+<p>But first, we need to get some data.</p>
+<section id="downloading-dataset-from-kaggle" class="level2">
+<h2 class="anchored" data-anchor-id="downloading-dataset-from-kaggle">Downloading dataset from Kaggle</h2>
+<p>This notebook is built using Google Colab. It is a notebook server provided by Google for free. You can also use other services to run the code below but you will have to figure out how to get the dataset. The dataset that we use here is present on Kaggle and you can directly download it from <a href="https://www.kaggle.com/spscientist/students-performance-in-exams?select=StudentsPerformance.csv">here</a>.</p>
+<p>In this notebook, we are going to download the dataset from Kaggle into Google Colab and store it in a directory in our Google Drive. Storing your data in the Drive saves you from the trouble of downloading the dataset every time you start a new session in Colab.</p>
+<p>For further guidance read this wonderful article by Mrinali Gupta: <a href="https://medium.com/analytics-vidhya/how-to-fetch-kaggle-datasets-into-google-colab-ea682569851a">How to fetch Kaggle Datasets into Google Colab</a></p>
+<p>So let’s get to it!</p>
+<p>First, we need to mount our google drive so that we can access all the folders in the drive.</p>
+<div id="cell-4" class="cell" data-outputid="dd95e560-39f3-41a2-adc5-398e7ef1aaf8">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> google.colab <span class="im">import</span> drive</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>drive.mount(<span class="st">'/content/gdrive'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Mounted at /content/gdrive</code></pre>
+</div>
+</div>
+<p>Then we will using the following code to provide a config path for the Kaggle Json API</p>
+<div id="cell-6" class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>os.environ[<span class="st">'KAGGLE_CONFIG_DIR'</span>] <span class="op">=</span> <span class="st">"/content/gdrive/My Drive/kaggle/StudentPerformance"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We will change our current directory to where we want the dataset to be downloaded</p>
+<div id="cell-8" class="cell" data-outputid="5809ecd8-9e37-4c68-9b87-1fb1620ba5b8">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>cd <span class="op">/</span>content<span class="op">/</span>gdrive<span class="op">/</span>My Drive<span class="op">/</span>kaggle<span class="op">/</span>StudentPerformance</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>/content/gdrive/My Drive/kaggle/StudentPerformance</code></pre>
+</div>
+</div>
+<p>Now we can download the dataset from kaggle</p>
+<div id="cell-10" class="cell" data-outputid="b8eae03a-9eec-48a5-9a6e-751c4eb5599d">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>kaggle datasets download <span class="op">-</span>d spscientist<span class="op">/</span>students<span class="op">-</span>performance<span class="op">-</span><span class="kw">in</span><span class="op">-</span>exams</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Downloading students-performance-in-exams.zip to /content/gdrive/My Drive/kaggle/StudentPerformance
+  0% 0.00/8.70k [00:00&lt;?, ?B/s]
+100% 8.70k/8.70k [00:00&lt;00:00, 1.14MB/s]</code></pre>
+</div>
+</div>
+<p>Let’s unzip the files</p>
+<div id="cell-12" class="cell" data-outputid="fa0a6411-a348-4735-d672-341cdda240e9">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>unzip \<span class="op">*</span>.<span class="bu">zip</span>  <span class="op">&amp;&amp;</span> rm <span class="op">*</span>.<span class="bu">zip</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Archive:  students-performance-in-exams.zip
+  inflating: StudentsPerformance.csv  </code></pre>
+</div>
+</div>
+<p>What files are present in the current directory?</p>
+<div id="cell-14" class="cell" data-outputid="144a6872-b9c8-4326-c1fd-e8aace597feb">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>ls</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>kaggle.json  StudentsPerformance.csv</code></pre>
+</div>
+</div>
+<p>You can see that there is a “StudentsPerformance.csv” file present in the directory. That is our dataset.</p>
+</section>
+<section id="exploring-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="exploring-the-data">Exploring the data</h2>
+<p>Before we apply any preprocessing steps to the data, we need to know what kind of data the dataset contains. Is it textual data? Is it numerical data? Are there any dates present? What about geographic locations?</p>
+<p>There are a lot of questions we can ask about the data in out dataset. So before we move further, we need to get a sense of what hidden knowledge our dataset contains.</p>
+<p>In the code cells below you will see some of the most common steps you can apply to gather information about your data.</p>
+<div id="cell-18" class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>pd.read_csv(<span class="st">"StudentsPerformance.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong><em>First 5 rows of the dataset</em></strong> <br>Seeing the first and last few rows can be really helpul in creating a mental picture about the data. It also allows you to map out the possible roadblocks you are going to face in acheiving your end goal.</p>
+<div id="cell-20" class="cell" data-outputid="949b0cfc-9d5a-4b71-c786-bb2683aed113">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>df.head(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">gender</th>
+<th data-quarto-table-cell-role="th">race/ethnicity</th>
+<th data-quarto-table-cell-role="th">parental level of education</th>
+<th data-quarto-table-cell-role="th">lunch</th>
+<th data-quarto-table-cell-role="th">test preparation course</th>
+<th data-quarto-table-cell-role="th">math score</th>
+<th data-quarto-table-cell-role="th">reading score</th>
+<th data-quarto-table-cell-role="th">writing score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>female</td>
+<td>group B</td>
+<td>bachelor's degree</td>
+<td>standard</td>
+<td>none</td>
+<td>72</td>
+<td>72</td>
+<td>74</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>female</td>
+<td>group C</td>
+<td>some college</td>
+<td>standard</td>
+<td>completed</td>
+<td>69</td>
+<td>90</td>
+<td>88</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>female</td>
+<td>group B</td>
+<td>master's degree</td>
+<td>standard</td>
+<td>none</td>
+<td>90</td>
+<td>95</td>
+<td>93</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>male</td>
+<td>group A</td>
+<td>associate's degree</td>
+<td>free/reduced</td>
+<td>none</td>
+<td>47</td>
+<td>57</td>
+<td>44</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>male</td>
+<td>group C</td>
+<td>some college</td>
+<td>standard</td>
+<td>none</td>
+<td>76</td>
+<td>78</td>
+<td>75</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<p><strong><em>Last 5 rows of the dataset</em></strong></p>
+<div id="cell-22" class="cell" data-outputid="50706889-cde2-43b2-d34a-88831b65fd96">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>df.tail(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">gender</th>
+<th data-quarto-table-cell-role="th">race/ethnicity</th>
+<th data-quarto-table-cell-role="th">parental level of education</th>
+<th data-quarto-table-cell-role="th">lunch</th>
+<th data-quarto-table-cell-role="th">test preparation course</th>
+<th data-quarto-table-cell-role="th">math score</th>
+<th data-quarto-table-cell-role="th">reading score</th>
+<th data-quarto-table-cell-role="th">writing score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">995</td>
+<td>female</td>
+<td>group E</td>
+<td>master's degree</td>
+<td>standard</td>
+<td>completed</td>
+<td>88</td>
+<td>99</td>
+<td>95</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">996</td>
+<td>male</td>
+<td>group C</td>
+<td>high school</td>
+<td>free/reduced</td>
+<td>none</td>
+<td>62</td>
+<td>55</td>
+<td>55</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">997</td>
+<td>female</td>
+<td>group C</td>
+<td>high school</td>
+<td>free/reduced</td>
+<td>completed</td>
+<td>59</td>
+<td>71</td>
+<td>65</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">998</td>
+<td>female</td>
+<td>group D</td>
+<td>some college</td>
+<td>standard</td>
+<td>completed</td>
+<td>68</td>
+<td>78</td>
+<td>77</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">999</td>
+<td>female</td>
+<td>group D</td>
+<td>some college</td>
+<td>free/reduced</td>
+<td>none</td>
+<td>77</td>
+<td>86</td>
+<td>86</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<p><strong><em>Information about data type of columns and null values</em></strong> <br> Knowing the data type of each column is crucial in choosing the right preprocessing step for that column as well as understanding what the values in the column represent.</p>
+<p>Another crucial piece of information is the number of non-null values. It helps you in deciding which columns need imputation.</p>
+<div id="cell-24" class="cell" data-outputid="0b90958b-21ee-42c6-8198-75a232f2d778">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>df.info()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 1000 entries, 0 to 999
+Data columns (total 8 columns):
+ #   Column                       Non-Null Count  Dtype 
+---  ------                       --------------  ----- 
+ 0   gender                       1000 non-null   object
+ 1   race/ethnicity               1000 non-null   object
+ 2   parental level of education  1000 non-null   object
+ 3   lunch                        1000 non-null   object
+ 4   test preparation course      1000 non-null   object
+ 5   math score                   1000 non-null   int64 
+ 6   reading score                1000 non-null   int64 
+ 7   writing score                1000 non-null   int64 
+dtypes: int64(3), object(5)
+memory usage: 62.6+ KB</code></pre>
+</div>
+</div>
+<p><strong><em>Checking if the dataset has null values</em></strong> <br> In the last cell, we saw how you can see if there are null values in your dataset. Below is another method to confirm if your data has any null/ missing values. As you can see below, this dataset does not have any null values.</p>
+<div id="cell-26" class="cell" data-outputid="bb081289-6c2b-4697-eaef-e4e1133a7c93">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">list</span>(df.columns):</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  bool_series<span class="op">=</span>pd.isnull(df[i])</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="bu">print</span>(<span class="st">"Column:</span><span class="sc">{}</span><span class="st"> has </span><span class="sc">{}</span><span class="st"> null values."</span>.<span class="bu">format</span>(i,df[bool_series].shape[<span class="dv">0</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Column:gender has 0 null values.
+Column:race/ethnicity has 0 null values.
+Column:parental level of education has 0 null values.
+Column:lunch has 0 null values.
+Column:test preparation course has 0 null values.
+Column:math score has 0 null values.
+Column:reading score has 0 null values.
+Column:writing score has 0 null values.</code></pre>
+</div>
+</div>
+<p><strong><em>Describing the numerical columns in the dataset</em></strong><br> If you are applying regression or even classification, knowing the summary statistics might help you in deciding how you want to handle the numerical features. Maybe you have to apply some transformations before you apply regression. Maybe the numerical features can be dropped in case they do not contribute much.</p>
+<div id="cell-28" class="cell" data-outputid="ddf8d39b-30da-4fbd-bfe2-8b4b964a0e31">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>df.describe()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="22">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">math score</th>
+<th data-quarto-table-cell-role="th">reading score</th>
+<th data-quarto-table-cell-role="th">writing score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">count</td>
+<td>1000.00000</td>
+<td>1000.000000</td>
+<td>1000.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">mean</td>
+<td>66.08900</td>
+<td>69.169000</td>
+<td>68.054000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">std</td>
+<td>15.16308</td>
+<td>14.600192</td>
+<td>15.195657</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">min</td>
+<td>0.00000</td>
+<td>17.000000</td>
+<td>10.000000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">25%</td>
+<td>57.00000</td>
+<td>59.000000</td>
+<td>57.750000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">50%</td>
+<td>66.00000</td>
+<td>70.000000</td>
+<td>69.000000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">75%</td>
+<td>77.00000</td>
+<td>79.000000</td>
+<td>79.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">max</td>
+<td>100.00000</td>
+<td>100.000000</td>
+<td>100.000000</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<p><strong><em>How many unique values does each column have</em></strong> <br> You might want to know how many unique values each column has. This is helpful when you have a big dataset and you are thinking of generating more features from the existing features. This is also important when you are dealing with cases where the <a href="https://en.wikipedia.org/wiki/Curse_of_dimensionality">Curse of Dimensionality</a> becomes relevant.</p>
+<div id="cell-30" class="cell" data-outputid="a02a4f06-61af-446b-8798-e8c02f9c77da">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>df.nunique()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="23">
+<pre><code>gender                          2
+race/ethnicity                  5
+parental level of education     6
+lunch                           2
+test preparation course         2
+math score                     81
+reading score                  72
+writing score                  77
+dtype: int64</code></pre>
+</div>
+</div>
+</section>
+<section id="the-essential-preprocessing-techniques" class="level2">
+<h2 class="anchored" data-anchor-id="the-essential-preprocessing-techniques">The essential preprocessing techniques</h2>
+<p>In this section, we will cover the essential preprocessing techniques you can apply to your data before feeding it into your model. This is by no means an exhaustive list of techniques you can apply, but this covers the most common techinques applied in the ML industry.</p>
+<p>The order in which we apply these techniques is very important since each preprocessing step transforms the data such that it may become incompatible for another preprocessing step.</p>
+<p>We are going to apply our preprocessing techniques in the following order : 1. Label Encoding (if needed) 2. One-hot Encoding 3. Imputation 5. Normalization or Standardization</p>
+<section id="label-encoding" class="level3">
+<h3 class="anchored" data-anchor-id="label-encoding">Label Encoding</h3>
+<p>We saw in the previous section that our data cantains columns which have string values. Although, we can understand what these string values represent, a machine does not. So , to make these values machine-readable we have to find a way to represent them numerically. Label Encoding is one such method of accomplishing this.</p>
+<p>In Label Encoding, we assign a unique integer value to each class in the data. This means that the gender column in our dataset will be encoded like so:</p>
+<table>
+<tbody><tr>
+<td>
+<b>Original values</b>
+</td>
+<td>
+Male
+</td>
+<td>
+Female
+</td>
+</tr>
+<tr><td>
+<b>Label Encoded values</b>
+</td>
+<td>
+0
+</td>
+<td>
+1
+</td>
+</tr>
+</tbody></table>
+<p>Let’s see this in action. We are going to label encode the following columns in our dataset:</p>
+<ul>
+<li>gender<br>
+</li>
+<li>race/ethnicity<br>
+</li>
+<li>parental level of education<br>
+</li>
+<li>lunch</li>
+<li>test preparation course</li>
+</ul>
+<div id="cell-35" class="cell" data-outputid="11611fec-eba7-4158-e59e-3e3dff2162b9">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> LabelEncoder</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>data<span class="op">=</span>df.copy() <span class="co"># creating a copy of our data since we do not want to change the original dataset</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">list</span>(data.columns)[:<span class="dv">5</span>]:</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  data[i]<span class="op">=</span>LabelEncoder().fit_transform(data[i])</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>data.head(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="25">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">gender</th>
+<th data-quarto-table-cell-role="th">race/ethnicity</th>
+<th data-quarto-table-cell-role="th">parental level of education</th>
+<th data-quarto-table-cell-role="th">lunch</th>
+<th data-quarto-table-cell-role="th">test preparation course</th>
+<th data-quarto-table-cell-role="th">math score</th>
+<th data-quarto-table-cell-role="th">reading score</th>
+<th data-quarto-table-cell-role="th">writing score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>72</td>
+<td>72</td>
+<td>74</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>0</td>
+<td>2</td>
+<td>4</td>
+<td>1</td>
+<td>0</td>
+<td>69</td>
+<td>90</td>
+<td>88</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>0</td>
+<td>1</td>
+<td>3</td>
+<td>1</td>
+<td>1</td>
+<td>90</td>
+<td>95</td>
+<td>93</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>47</td>
+<td>57</td>
+<td>44</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>1</td>
+<td>2</td>
+<td>4</td>
+<td>1</td>
+<td>1</td>
+<td>76</td>
+<td>78</td>
+<td>75</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<p>Although Label Encoding can be useful in many cases, there is a caveat. An algorithm will not be able to differentiate between a numerical variable and a label encoded variable. Due to this limitation, the values in the label encoded columns might be misunderstood. So in our gender column, ‘1’ might be given a higher priority than ‘0’ even when no numerical relation exists between the two classes.</p>
+<p>Due to this limitation, we need to find a better way of representing our categorical variables in a numerical form.</p>
+</section>
+<section id="one-hot-encoding" class="level3">
+<h3 class="anchored" data-anchor-id="one-hot-encoding">One-hot encoding</h3>
+<p>Due to the shortcomings of Label Encoding, we cannot apply it to transform categorical variables into numerical values. Instead, we use One-Hot Encoding. In One-Hot Encoding, we take the n categories in a column and create n or n-1 columns from them. The new columns contain only binary values (0 or 1). So, if our gender column is one-hot encoded, then we will have two new columns: Male and Female. The values in these columns will be 0 (Male column) and 1 (Female column) if a row earlier had ‘female’ as the gender and vice versa.</p>
+<p>Let’s see how to implement this.</p>
+<div id="cell-39" class="cell" data-outputid="fd80201c-603d-4e64-96c4-47f41911ed1e">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>pd.get_dummies(data<span class="op">=</span>df,drop_first<span class="op">=</span><span class="va">True</span>) <span class="co">#drop_first can also be False</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>df.head(<span class="dv">5</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="28">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">math score</th>
+<th data-quarto-table-cell-role="th">reading score</th>
+<th data-quarto-table-cell-role="th">writing score</th>
+<th data-quarto-table-cell-role="th">gender_male</th>
+<th data-quarto-table-cell-role="th">race/ethnicity_group B</th>
+<th data-quarto-table-cell-role="th">race/ethnicity_group C</th>
+<th data-quarto-table-cell-role="th">race/ethnicity_group D</th>
+<th data-quarto-table-cell-role="th">race/ethnicity_group E</th>
+<th data-quarto-table-cell-role="th">parental level of education_bachelor's degree</th>
+<th data-quarto-table-cell-role="th">parental level of education_high school</th>
+<th data-quarto-table-cell-role="th">parental level of education_master's degree</th>
+<th data-quarto-table-cell-role="th">parental level of education_some college</th>
+<th data-quarto-table-cell-role="th">parental level of education_some high school</th>
+<th data-quarto-table-cell-role="th">lunch_standard</th>
+<th data-quarto-table-cell-role="th">test preparation course_none</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>72</td>
+<td>72</td>
+<td>74</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>69</td>
+<td>90</td>
+<td>88</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>90</td>
+<td>95</td>
+<td>93</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>47</td>
+<td>57</td>
+<td>44</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>76</td>
+<td>78</td>
+<td>75</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<p>In the above code, the function has a parameter <em>drop_first</em>. What does this mean? In one-hot encoding, we usually drop one of the columns created for each categorical variable to avoid high correlation among the features. But, in many cases dropping columns can have a negative impact on the model performance. So it is always better to experiment and see what works in your case.</p>
+<p>One-hot encoding is applied in almost all cases where we have to deal with categorical variables. But when the number of categories in a column gets too big, we cannot use this technique since the resulting dataset might be very large and difficult to handle. In this case, you might want to consider other alternatives like dropping the high-cardinality columns, using label encoding, using dimensionality reduction techniques.</p>
+</section>
+<section id="imputation" class="level3">
+<h3 class="anchored" data-anchor-id="imputation">Imputation</h3>
+<p>Dealing with missing data is another important data preprocessing step. Missing values can have huge impacts on how your model performs. If a significant portion of values in a column are missing then you might consider dropping that column. But,dropping columns might actually result in leaving out essential information.So, we apply imputation.</p>
+<p>In imputation, we replace missing data with substituted values. Here, we will dicuss some of the common ways in which imputation is done: * <strong>Replace by 0:</strong> Sometimes replacing numerical values with 0 can work. Suppose you have an Age column in your dataset. Filling 0 in the places where age is missing might not affect the model’s accuracy. * <strong>Replace by mean:</strong> You can also take the mean of all the values in the column and use that to fill the missing places. This is the most common imputation approach. But it is very sensitive to outliers. * <strong>Replace by most_frequent:</strong> You can replace the missing values with the most frequent value. This can work for both categorical and numerical data. * <strong>Replace using custom function:</strong> If you know how a particular column was generated then you can use that process to fill the missing values. Usually, this approach is not applicable since the data is downloaded from elsewhere.</p>
+<p>In our dataset, we do not have any missing values so we do not need to apply imputation.</p>
+<p>For futher guidance: <a href="https://scikit-learn.org/stable/modules/impute.html">Imputation of missing values</a></p>
+</section>
+<section id="standardization" class="level3">
+<h3 class="anchored" data-anchor-id="standardization">Standardization</h3>
+<p>Even after converting our data into a machine readable format, our work is not done. In any dataset, you will have parameters that our measured in different units. For example, you might have Time (measured in hours) and Distance (measured in miles).The values of these parameters will have different distributions and different min/max values. You cannot combine these different parameters using a ML model without taking into account their measurement units.So, we use standardization and normalization.</p>
+<p>Both of these techniques transform the data in a way such that it either becomes dimensionless (in terms of measurement units) or the parameters end up having similar distributions.</p>
+<p>The biggest difference between standardization and normalization is as follows: * Standardization typically rescales the values to have a mean of 0 and a standard deviation of 1 (unit variance). * Normalization typically rescales the values into a range of [0,1].</p>
+<p>Because of the difference in the way they transform the values we get a different output in each case.</p>
+<p>Let’s scale our data.</p>
+<div id="cell-45" class="cell" data-outputid="6b277e86-d3e2-4b33-f7e3-4dc9b38c566b">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>data<span class="op">=</span>df.copy()</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>data<span class="op">=</span>StandardScaler().fit_transform(data)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>data[:<span class="dv">3</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="32">
+<pre><code>array([[ 0.39002351,  0.19399858,  0.39149181, -0.96462528,  2.0647416 ,
+        -0.68441857, -0.59583014, -0.40347329,  2.73396713, -0.49374193,
+        -0.2503982 , -0.54036068, -0.4669334 ,  0.74188112,  0.74674788],
+       [ 0.19207553,  1.42747598,  1.31326868, -0.96462528, -0.4843221 ,
+         1.46109419, -0.59583014, -0.40347329, -0.36576885, -0.49374193,
+        -0.2503982 ,  1.85061578, -0.4669334 ,  0.74188112, -1.33914006],
+       [ 1.57771141,  1.77010859,  1.64247471, -0.96462528,  2.0647416 ,
+        -0.68441857, -0.59583014, -0.40347329, -0.36576885, -0.49374193,
+         3.99363901, -0.54036068, -0.4669334 ,  0.74188112,  0.74674788]])</code></pre>
+</div>
+</div>
+<p>Now let’s look at normalization.</p>
+</section>
+<section id="normalization" class="level3">
+<h3 class="anchored" data-anchor-id="normalization">Normalization</h3>
+<p>Normalization typically rescales the values into a range of [0,1]. As you will see below, there is a notable difference between the output of standardization and normalization. Normalization will not transform the values of your categorical/one-hot encoded variables in any way. On the other hand, standardization transforms all the columns in the dataset.</p>
+<p>So, let’s normalize our data.</p>
+<div id="cell-49" class="cell" data-outputid="d79e8ead-15b0-434e-9683-62c10d468153">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> MinMaxScaler</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>data<span class="op">=</span>df.copy()</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>data<span class="op">=</span>MinMaxScaler().fit_transform(data)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>data[:<span class="dv">3</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="33">
+<pre><code>array([[0.72      , 0.6626506 , 0.71111111, 0.        , 1.        ,
+        0.        , 0.        , 0.        , 1.        , 0.        ,
+        0.        , 0.        , 0.        , 1.        , 1.        ],
+       [0.69      , 0.87951807, 0.86666667, 0.        , 0.        ,
+        1.        , 0.        , 0.        , 0.        , 0.        ,
+        0.        , 1.        , 0.        , 1.        , 0.        ],
+       [0.9       , 0.93975904, 0.92222222, 0.        , 1.        ,
+        0.        , 0.        , 0.        , 0.        , 0.        ,
+        1.        , 0.        , 0.        , 1.        , 1.        ]])</code></pre>
+</div>
+</div>
+<p>Again, it is very important to experiment with both of these techniques to see which one works for you.</p>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>In this blog post we have seen the essentials of data preprocessing for tabular data. My goal with this blog post was to provide a condensed overview of the what data preprocessing looks like with useful code snippets that anyone can use in their projects. Applying proper preprocessing can be extremely helpful in improving the model performance and ensuring that your model is ready for the real world.</p>
+<p>If hope you liked this blog post, please share it with other ML enthusiasts.</p>
+<p><em>See you on the next adventure.</em></p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/mehulfollytobevice\.github\.io\/my_blogs2\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

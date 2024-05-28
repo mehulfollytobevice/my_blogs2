@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.554">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Mehul Jain">
+<meta name="dcterms.date" content="2024-05-26">
+
+<title>Thoughts, Code and Mischief - MLOps in Action - How to Implement an End-to-End Pipeline for Your Project</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Thoughts, Code and Mischief</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/mehulfollytobevice"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">MLOps in Action - How to Implement an End-to-End Pipeline for Your Project</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">markdown</div>
+                <div class="quarto-category">machine_learning</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Mehul Jain </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">May 26, 2024</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#project-introduction" id="toc-project-introduction" class="nav-link active" data-scroll-target="#project-introduction">Project Introduction:</a></li>
+  <li><a href="#project-structure" id="toc-project-structure" class="nav-link" data-scroll-target="#project-structure">Project Structure:</a></li>
+  <li><a href="#tools-and-project-flowchart" id="toc-tools-and-project-flowchart" class="nav-link" data-scroll-target="#tools-and-project-flowchart">Tools and Project Flowchart:</a></li>
+  <li><a href="#stages-of-a-ml-project-lifecycle" id="toc-stages-of-a-ml-project-lifecycle" class="nav-link" data-scroll-target="#stages-of-a-ml-project-lifecycle">Stages of a ML project lifecycle:</a>
+  <ul class="collapse">
+  <li><a href="#product-management-what-and-why" id="toc-product-management-what-and-why" class="nav-link" data-scroll-target="#product-management-what-and-why">Product Management (What and Why):</a></li>
+  <li><a href="#engineering-how" id="toc-engineering-how" class="nav-link" data-scroll-target="#engineering-how">Engineering (How):</a></li>
+  <li><a href="#project-management-who-and-when" id="toc-project-management-who-and-when" class="nav-link" data-scroll-target="#project-management-who-and-when">Project Management (Who and When):</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion:</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References:</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p>As data scientists, we often find ourselves in the familiar, comfortable realms of Jupyter notebooks and Python IDEs. However, there comes a time when we must step out of our natural habitats and present our work to a broader audience, encompassing various stakeholders. This is where MLOps (Machine Learning Operations) comes into play, bridging the gap between data science and operational processes. In this blog post, I’ll take you through an end-to-end MLOps pipeline based on a project I’ve recently completed. We’ll talk about each stage of the pipeline, exploring how to design processes with the goal of creating robust, scalable machine learning systems. Whether you’re a data scientist looking to operationalize your models or an engineer aiming to optimize ML workflows, this blog post will provide practical insights and strategies to elevate your machine learning projects.</p>
+<section id="project-introduction" class="level2">
+<h2 class="anchored" data-anchor-id="project-introduction">Project Introduction:</h2>
+<p>I recently completed an end-to-end machine learning project called Price Alchemy, which we will use to explore the various facets of MLOps in practice. You can check out the project <a href="https://github.com/mehulfollytobevice/Price_Alchemy">here</a>.</p>
+<p>Price Alchemy is a price suggestion system for second-hand e-commerce platforms like Mercari or EBay. Imagine you’re a seller on this platform: you need to list an item at a price that’s attractive to buyers but still profitable for you. Pricing too high could deter buyers, while pricing too low could result in a loss. The goal of Price Alchemy is to suggest an optimal price that balances these constraints, maximizing seller profit while ensuring buyer interest.</p>
+<p>To achieve this, we developed a model that integrates textual data about the product with tabular data. This approach allows us to predict the price of an item by considering multiple variables such as item category, brand, and description. By leveraging this comprehensive data, the system can make accurate and practical price suggestions tailored to the dynamic nature of the second-hand market.</p>
+<p>This project uses the <a href="https://www.kaggle.com/competitions/mercari-price-suggestion-challenge/data">Mercari Price Suggestion Challenge</a> dataset from Kaggle.</p>
+</section>
+<section id="project-structure" class="level2">
+<h2 class="anchored" data-anchor-id="project-structure">Project Structure:</h2>
+<p>Perusing the GitHub repository tells you that the project contains several setup files and sub-folders for organizing different parts of the project.</p>
+<p>Let’s understand the file organization:</p>
+<ul>
+<li><p><strong>data/:</strong> This directory contains the raw and processed data. Raw data files (train.csv and test.csv) are stored in this directory, along with processed data files generated at the end of the data-preprocessing pipeline.</p></li>
+<li><p><strong>notebooks/:</strong> Jupyter notebooks play a crucial role in providing a playground for developing code related to exploratory data analysis, data preprocessing, model development, and evaluation. All the Jupyter notebooks developed as a part of the project are stored here.</p></li>
+<li><p><strong>dags/:</strong> Every production level ML system uses a workflow orchestration platform like AirFlow to automate the execution of various pipelines (data preprocessing, training, testing, re-training, etc). In this project, we employ Airflow to take care of this function. This directory contains the source code for Airflow DAGs that automate parts of the machine learning pipeline. It also contains the source code for the <strong>price_alchemy</strong> module which is used for performing data loading, validation and data preprocessing, modeling, and model evaluation. The <strong>price_alchemy</strong> module can be easily installed in the working directory using pip.</p></li>
+<li><p><strong>tests/:</strong> An essential but often ignored part of any good project are the tests that are used to validate the proper functioning of the source code. This directory contains unit tests, integration tests, or any other tests relevant to the project.</p></li>
+<li><p><strong>models/:</strong> Saved model files generated during model training are stored in this directory.</p></li>
+<li><p><strong>.github/workflows:</strong> This folder contains YAML files defining workflows for automating various tasks related to the project. In the context of this project, GitHub workflows are used to automate the testing and validation of code changes. This involves running unit tests, integration tests, and code quality checks whenever new code is pushed to the repository.</p></li>
+<li><p><strong>requirements.txt:</strong> A text file listing the Python package dependencies required to run the project.</p></li>
+<li><p><strong>README.md:</strong> Documentation providing an overview of the project, instructions for setup and usage, and any additional information relevant to users and contributors.</p></li>
+</ul>
+</section>
+<section id="tools-and-project-flowchart" class="level2">
+<h2 class="anchored" data-anchor-id="tools-and-project-flowchart">Tools and Project Flowchart:</h2>
+<p>Having understood the project’s file structure, let’s dive into the tools utilized and the overall architecture of the project. The following flow chart details each stage of the project’s workflow, illustrating how data flows through various tools and components, from data ingestion and preprocessing to model training, evaluation, and deployment.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="mlops_workflow.png" class="img-fluid figure-img"></p>
+<figcaption>Project Architecture</figcaption>
+</figure>
+</div>
+<p>Let’s pause for a moment to talk about the diverse array of tools employed and their pivotal roles in the overall architecture:</p>
+<ol type="1">
+<li><p><strong>BigQuery Database:</strong> Imagine starting your machine learning project with a treasure trove of data. That’s what BigQuery is! It’s the ultimate data warehouse in the cloud, capable of handling massive datasets with ease. BigQuery helps us to perform lightning-fast SQL queries on the data, making it the backbone for storing and managing the vast amounts of information needed for the machine learning models. All of the training and validation data is stored in BigQuery for ease of access and scalability.</p></li>
+<li><p><strong>Jupyter Notebooks:</strong> For any data scientist, Jupyter Notebooks are the playground where creativity meets data. We use Notebooks for experimentation, developing parts of the source code, performing EDA, and documenting the findings in one place.</p></li>
+<li><p><strong>GitHub</strong>: GitHub is a platform for collaboration and versioning control. All of the code developed in the project is stored and maintained on GitHub. Furthermore, every time new code is pushed to GitHub, a workflow runs a series of integration tests to ensure everything works the way it’s supposed to.</p></li>
+<li><p><strong>Apache Airflow</strong>: Airflow is like the conductor of an orchestra, ensuring that each part of the ML pipeline runs in harmony. It automates the complex workflows involved in data validation, preprocessing, model training, and evaluation.</p></li>
+<li><p><strong>MLfLow</strong>: A critical aspect of any machine learning project is experimentation. Exploring various data preprocessing techniques, models, and hyper-parameters is essential to identify the optimal solution that meets all the project’s requirements. And, this process of exploration can get chaotic very quickly. MLflow brings order to this chaos by tracking experiments, models, and parameters.</p></li>
+<li><p><strong>Hyperopt</strong>: Tuning a model’s hyper-parameters can be very challenging, so we use Hyperopt to simplify the process. By automating the search for optimal hyper-parameters, Hyperopt ensures that the model reaches its highest accuracy and efficiency.</p></li>
+<li><p><strong>Docker (Deployment)</strong>: Consistency is key when moving models from development to production. Docker ensures that our model runs smoothly across different environments by containerizing it with all its dependencies. It’s like packaging your model into a self-contained unit that can be easily transported and deployed anywhere.</p></li>
+<li><p><strong>FastAPI (Prediction App/UI)</strong>: To make the model accessible to users, we need an intuitive user interface or a robust API. FastAPI, a modern and high-performance web framework for building APIs with Python, is an excellent choice. It enables us to serve model predictions with minimal latency, ensuring a responsive user experience.</p></li>
+<li><p><strong>ELK Stack: Elasticsearch, Logstash, Kibana (Model Monitoring)</strong>: Deploying a model is not the end; it’s just the beginning. Model monitoring ensures that our model continues to perform well in the real world. The ELK Stack – Elasticsearch for searching and analyzing data, Logstash for processing logs, and Kibana for visualizing data – provides a robust solution for monitoring the model.</p></li>
+</ol>
+</section>
+<section id="stages-of-a-ml-project-lifecycle" class="level2">
+<h2 class="anchored" data-anchor-id="stages-of-a-ml-project-lifecycle">Stages of a ML project lifecycle:</h2>
+<p>Developing a machine learning product involves multiple stages, each crucial for ensuring the final solution is effective, scalable, and aligned with business objectives. To make this process smooth, it’s important to follow a structured template that guides the development from starting to finish. In general, the following is a good template to stick to:</p>
+<blockquote class="blockquote">
+<p><strong>Product (What &amp; Why) -&gt; Engineering (How) -&gt; Project (Who &amp; When)</strong></p>
+</blockquote>
+<section id="product-management-what-and-why" class="level3">
+<h3 class="anchored" data-anchor-id="product-management-what-and-why">Product Management (What and Why):</h3>
+<p>Understanding the motivation behind the product and defining clear objectives and key results (OKRs) is the first step in the process. This involves answering:</p>
+<ul>
+<li><strong>What is the motivation behind the product?</strong>
+<ol type="1">
+<li><strong>Background</strong>: Defining the target customer and their goals is essential. It’s important to clarify:
+<ul>
+<li><strong>Who is the customer we are targeting?</strong></li>
+<li><strong>What is the main goal for the customer?</strong></li>
+<li><strong>What are the obstacles preventing the customer from achieving their goal?</strong></li>
+<li><strong>What can make the customer’s job easier?</strong></li>
+</ul></li>
+<li><strong>Value Proposition</strong>: To create a compelling product, you need to focus on reducing customer pains and creating advantages. Key questions include:
+<ul>
+<li><strong>What needs to be built to help the customer reach their goal?</strong></li>
+<li><strong>How will the product reduce customer pains?</strong></li>
+<li><strong>How will the product create advantages for the customer?</strong></li>
+</ul></li>
+</ol></li>
+<li><strong>What are the objectives and key results (OKRs) for the product?</strong>
+<ol type="1">
+<li><strong>Objective</strong>: Defining specific objectives helps focus the product development process. Consider:
+<ul>
+<li><strong>What are the key objectives we want to focus on for the product?</strong></li>
+<li><strong>How does the customer interact with the product?</strong></li>
+</ul></li>
+<li><strong>Solution</strong>: Developing a solution involves identifying core features, integration points, alternatives, and constraints. Addressing these questions is crucial:
+<ul>
+<li><strong>What core features are required to meet our objectives?</strong></li>
+<li><strong>What are the integration points for the solution?</strong></li>
+<li><strong>What are the alternatives to the proposed solution?</strong></li>
+<li><strong>What are the constraints we need to consider?</strong></li>
+<li><strong>What is out-of-scope for this solution?</strong></li>
+</ul></li>
+<li><strong>Feasibility</strong>: Assessing the feasibility of the solution ensures that it can be practically implemented. Important questions include:
+<ul>
+<li><strong>How feasible is our solution?</strong></li>
+<li><strong>Do we have the required resources (data, $, team) to deliver the solution?</strong></li>
+</ul></li>
+</ol></li>
+</ul>
+<p>By systematically addressing these questions, we can effectively scope and guide the development of machine learning products. This ensures that out end-product is customer-centric, feasible, and valuable.</p>
+</section>
+<section id="engineering-how" class="level3">
+<h3 class="anchored" data-anchor-id="engineering-how">Engineering (How):</h3>
+<p>In this stage, the focus shifts from defining goals and understanding customer needs to figuring out how to implement the solution. This involves planning and executing the technical aspects, such as data management, labeling processes, core feature development, and system integration.</p>
+<section id="data" class="level4">
+<h4 class="anchored" data-anchor-id="data">Data:</h4>
+<p>As the old adage in data science goes, “Garbage in, garbage out.” If your data quality is poor, your machine learning model and everything that follows will also be compromised. Ensuring the integrity and quality of your data is paramount to building effective machine learning solutions. While picking a source of data or collecting data, we should try to answer the following questions:</p>
+<ol type="1">
+<li><strong>Training data</strong>: What we use to train our machine learning model.
+<ul>
+<li><strong>Do we have access to input labels for the data?</strong></li>
+<li><strong>Do we know the origin of the data and the schema it follows?</strong></li>
+<li><strong>Was there any kind of sampling done to generate this dataset?</strong></li>
+<li><strong>Are we introducing any data leaks?</strong></li>
+</ul></li>
+<li><strong>Production data</strong>: The unseen data that is passed into the machine learning model after deployment.
+<ul>
+<li><strong>Is the data accessible timely and regularly?</strong></li>
+<li><strong>How do we trust that this data follows the same distribution as the training data?</strong></li>
+</ul></li>
+<li><strong>Labelling and Feature Engineering</strong>: Often, we have to label input data to make it suitable for a supervised learning task.
+<ul>
+<li><strong>How do we decide on a label definition that is appropriate with respect to the context of the problem?</strong></li>
+<li><strong>How do we design the labelling process, can it be done in a semi-supervised fashion?</strong></li>
+<li><strong>Which features best capture the essential information needed for the task at hand?</strong></li>
+</ul></li>
+</ol>
+<p>Let’s try to answer some of these questions in the context of <code>Price Alchemy</code>:</p>
+<p><strong>Do we have access to input labels for the data?</strong></p>
+<blockquote class="blockquote">
+<p>Yes, the dataset includes the target variable <code>price</code>, which is the label for supervised learning. This makes it much easier to train a machine learning model by eliminating the labelling step.</p>
+</blockquote>
+<p><strong>Do we know the origin of the data and the schema it follows?</strong></p>
+<blockquote class="blockquote">
+<p>Yes, the data comes from Kaggle’s <strong>Mercari Price Suggestion Challenge</strong>. The schema includes features such as <code>item condition</code>, <code>category</code>, <code>brand</code>, and <code>item description</code>.</p>
+</blockquote>
+<p><strong>How do we trust that this data follows the same distribution as the training data?</strong></p>
+<blockquote class="blockquote">
+<p>The <code>price_alchemy</code> module contains a python class (<code>data_validation.py</code>) which allows to apply a range of data quality checks on the input data. From basic checks like validating the minimum and maximum value of features to validating the z-score of the <code>price</code> variable, all is covered in this python class.</p>
+</blockquote>
+<p><strong>How do we decide on a label definition that is appropriate with respect to the context of the problem?</strong></p>
+<blockquote class="blockquote">
+<p>The feature <code>price</code> is suitable for the problem as it directly aligns with the business objective of estimating the optimal value of items for sale.</p>
+</blockquote>
+<p><strong>Which features best capture the essential information needed for the task at hand?</strong></p>
+<blockquote class="blockquote">
+<p>Key features include <code>item condition</code>, <code>category</code>, <code>brand</code>, and <code>item description</code>, as they are directly relevant to determining the price of an item.</p>
+</blockquote>
+</section>
+<section id="evaluation" class="level4">
+<h4 class="anchored" data-anchor-id="evaluation">Evaluation:</h4>
+<p>Establishing evaluation criteria early on provides a well-defined roadmap, guiding us through the complexities of data analysis and model development. It sets a quantifiable goal, allowing us to measure progress objectively and make informed decisions throughout the project.</p>
+<p>Here are a few points that can help us in designing a good evaluation procedure:</p>
+<ol type="1">
+<li><strong>Deciding on a metric</strong>: Translating a qualitative business goal into a quantifiable metric is quite hard. The following questions can be helpful deciding which metric to use.
+<ul>
+<li><strong>What kind of problem is it? Classification or regression?</strong></li>
+<li><strong>Does the metric capture the desired aspect of model performance?</strong></li>
+<li><strong>What are the implications of false positives and false negatives?</strong></li>
+<li><strong>How sensitive is the metric to changes in model predictions?</strong></li>
+</ul></li>
+<li><strong>Intrinsic Evaluation vs.&nbsp;Extrinsic Evaluation</strong>: Intrinsic evaluation involves measuring the model’s performance solely based on its output, independent of any external context. On the other hand, extrinsic evaluation evaluates the model within the context of its application or task, considering how well it performs in real-world scenarios.
+<ul>
+<li><strong>Are there any standardized benchmarks or datasets commonly used for intrinsic evaluation in the field?</strong></li>
+<li><strong>How does the model perform on downstream tasks or applications?</strong></li>
+</ul></li>
+<li><strong>Online evaluation vs offline evaluation</strong>: Offline evaluation involves analyzing historical data sets to assess model performance in controlled environments. Conversely, online evaluation entails evaluating models in real-time or near real-time settings, often using streaming data.
+<ul>
+<li><strong>Does the model need to achieve a certain level of performance before it can be deployed?</strong></li>
+<li><strong>How important is it to assess the model’s performance in dynamic, real-world conditions, including user interactions and changing environments?</strong></li>
+<li><strong>What level of immediacy is required for evaluating model performance and making decisions based on evaluation results?</strong></li>
+</ul></li>
+</ol>
+<p>In the context of <code>Price Alchemy</code>:</p>
+<p><strong>What kind of problem is it? Classification or regression?</strong></p>
+<blockquote class="blockquote">
+<p>In this project, we are dealing with a regression problem.</p>
+</blockquote>
+<p><strong>Does the metric capture the desired aspect of model performance?</strong></p>
+<blockquote class="blockquote">
+<p>Mean Absolute Error (MAE) or Root Mean Squared Error (RMSE) would capture how accurately the model predicts prices, reflecting the average prediction error in the same units as the price.</p>
+</blockquote>
+<p><strong>How sensitive is the metric to changes in model predictions?</strong></p>
+<blockquote class="blockquote">
+<p>RMSE is more sensitive to outliers than MAE, making it suitable if large errors are particularly undesirable.</p>
+</blockquote>
+<p><strong>How important is it to assess the model’s performance in dynamic, real-world conditions, including user interactions and changing environments?</strong></p>
+<blockquote class="blockquote">
+<p>It is crucial to assess performance in real-world conditions to capture effects of user behavior and market trends, which can differ from historical data.</p>
+</blockquote>
+</section>
+<section id="modeling" class="level4">
+<h4 class="anchored" data-anchor-id="modeling">Modeling:</h4>
+<p>How we model our problem can vary greatly based on the context, computational complexity, response time, etc. But, there are some general guidelines that can be followed:</p>
+<ol type="1">
+<li><strong>End-to-End utility</strong>: The end result from every iteration should deliver minimum end-to-end utility so that we can benchmark iterations against each other and plug-and-play with the system.</li>
+<li><strong>Rules before ML</strong>: Before employing a ML based system, it is helpful to use a deterministic rules based approach as a baseline.</li>
+<li><strong>Augmentation is always better</strong>: Augmenting the decision making process for a human is often better than automating the final decision process. This helps in keeping a human in the loop in case the system gives an unexpected result.</li>
+<li><strong>Early releases for validation</strong>: Not all early releases need to be end-user facing. Some can be used for internal validation, feedback, data collection, etc.</li>
+<li><strong>Experiment! Experiment! Experiment!</strong>: All models should be well tested and evaluated, so that we can objectively benchmark different approaches. This involves testing the code, validating the data quality and logging all the model runs with the hyper parameters used.</li>
+</ol>
+<p>In the context of <code>Price Alchemy</code>:</p>
+<p><strong>End-to-End Utility:</strong></p>
+<blockquote class="blockquote">
+<p>For <code>Price Alchemy</code>, this means each model version must predict prices accurately enough to be deployable in a testing or production environment.</p>
+</blockquote>
+<p><strong>Rules Before ML:</strong></p>
+<blockquote class="blockquote">
+<p>Before implementing a ML based pricing system, we can start with a deterministic rules-based approach as a baseline. This could involve setting pricing rules based on factors such as <code>item_condition</code>, <code>brand</code>, item description keywords, and market trends.</p>
+</blockquote>
+<p><strong>Augmentation is always better</strong>:</p>
+<blockquote class="blockquote">
+<p>Rather than fully automating the pricing decision process, augmenting the decision-making process for human oversight is significantly more beneficial. This involves developing a pricing model that provides recommendations or insights to sellers, who can then make informed decisions based on their expertise and intuition.</p>
+</blockquote>
+<p><strong>Experiment! Experiment! Experiment!:</strong></p>
+<blockquote class="blockquote">
+<p>In this project, we make sure to thoroughly test each version of our code using tools like <code>mypy</code> and <code>pytest</code>. Additionally, we use <code>MLFlow</code> to log each training or cross-validation run of our model. This helps us keep a record of all the settings we use (the hyper parameters) , and the results we get (evaluation metrics). We also keep track of the type of preprocessed data we use to train the model, so we can understand how it affects the results.</p>
+</blockquote>
+</section>
+</section>
+<section id="project-management-who-and-when" class="level3">
+<h3 class="anchored" data-anchor-id="project-management-who-and-when">Project Management (Who and When):</h3>
+<p>At the end of the day, it boils down to organizing all the work into reasonable timelines and allocating specific responsibilities to teams/individuals so that the end-product can be delivered on time. Here are a few points to keep in mind.</p>
+<ol type="1">
+<li><strong>Team Involvement</strong>: It’s crucial to identify and involve all relevant team members from the start. This includes product managers, data engineers, machine learning engineers, DevOps, UI/UX designers, accessibility experts, and site reliability engineers. Each team has specific roles and responsibilities, ensuring that all aspects of the project are covered comprehensively.</li>
+<li><strong>Deliverables</strong>: Breaking down objectives into clear deliverables is essential. Each deliverable should specify the task, the contributors, dependencies, acceptance criteria, and status. This creates a detailed checklist for teams to prioritize their tasks.</li>
+<li><strong>Objective Prioritization</strong>: Objectives need to be categorized by priority and assigned to specific releases.</li>
+<li><strong>Timelines and Milestones</strong>: Setting a timeline for the project is critical. This involves conducting exploration studies, pushing iterations to development, staging, and eventually production. The timeline should be transparent and allow for adjustments based on feasibility studies and stakeholder feedback.</li>
+<li><strong>Iterative Engagement</strong>: Continuous engagement with the product and engineering teams is necessary to ensure the right product is built effectively. Iterative feedback and adjustments help in refining the product continuously.</li>
+</ol>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion:</h2>
+<p>Implementing an end-to-end MLOps pipeline is a transformative journey that bridges the gap between data science and operational processes. Through our exploration of the Price Alchemy project, we’ve learned how each part of the MLOps pipeline—from data collection and cleaning to model training, deployment, and monitoring— is essential in creating an accurate, reliable machine learning solution.</p>
+<p>Using tools like BigQuery, Jupyter Notebooks, Apache Airflow, and Docker, along with following best practices in product management and project management, we can build a smooth workflow. This systematic approach not only enhances the efficiency of our operations but also ensures that our models deliver real value to end-users.</p>
+<p>For data scientists and ML engineers, adopting an MLOps framework offers a structured path to transitioning from experimental notebooks to production-ready systems. It fosters collaboration across multidisciplinary teams, allowing for continuous improvement and facilitates sharing of work with a broader audience.</p>
+<p>In summary, MLOps is more than a set of practices; it’s a mindset that embraces the full lifecycle of machine learning projects. By setting up a solid MLOps pipeline, you can make sure your models are practical tools that drive business success. Whether you’re just starting out in data science or looking to improve your ML workflows, integrating MLOps into your projects will take them to the next level.</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References:</h2>
+<ul>
+<li><a href="https://madewithml.com/courses/mlops/product-design/">Made with ML Product Design</a></li>
+<li><a href="https://www.kaggle.com/competitions/mercari-price-suggestion-challenge/data">Mercari Dataset</a></li>
+<li><a href="https://github.com/mehulfollytobevice/Price_Alchemy/">Price Alchemy Repository</a></li>
+<li><a href="https://www.mlwithramin.com/">ML with Ramin</a></li>
+<li><a href="https://pair.withgoogle.com/guidebook/">People+ AI Guidebook</a></li>
+<li><a href="https://cloud.google.com/blog/products/ai-machine-learning/key-requirements-for-an-mlops-foundation">Key requirements for an MLOps foundation</a></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/mehulfollytobevice\.github\.io\/my_blogs2\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
