@@ -2,16 +2,9 @@
   {
     "objectID": "about.html",
     "href": "about.html",
-    "title": "About",
+    "title": "Hi 👋, I’m Mehul",
     "section": "",
-    "text": "Hi 👋, I’m Mehul\nWelcome to Thoughts, Code and Mischief. A place to find interesting stuff on AI, ML and life."
-  },
-  {
-    "objectID": "about.html#quick-intro",
-    "href": "about.html#quick-intro",
-    "title": "About",
-    "section": "Quick Intro:",
-    "text": "Quick Intro:\n\n🏛 I am a graduate student at Northeastern University, Boston pursuing my Master’s Degree in Data Science.\n🎯 I’m primarily interested in data science and machine learning.\n🧩 I love creating amazing things using code.\n🥁 Fun fact: I play drums and Indian classical flute."
+    "text": "Welcome to Thoughts, Code and Mischief. A place to find interesting stuff on AI, ML and life.\n\nAbout me:\nI am a perpetual learner on a journey through the known and unknown lands of machine learning, data science and natural language processing. Currently, I am a graduate student at Northeastern University, Boston pursuing my master’s degree in data science. I completed my undergraduate degree in Computer Science and Engineering from Vellore Institute of Technology, Vellore. In the past, I have worked on multiple research papers and projects tackling problems in the domains of ML, DL and NLP. I aspire to become a successful data scientist and create data driven solutions for solving problems at a global scale."
   },
   {
     "objectID": "posts/2024-05-15-pricealchemy.html",
