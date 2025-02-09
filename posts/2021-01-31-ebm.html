@@ -549,7 +549,14 @@ Name: MI Scores, dtype: float64</code></pre>
 </div>
 <p>These visualizations support the mutual information scores we saw earlier, particularly for cholesterol and max heart rate being important predictors.</p>
 <blockquote class="blockquote">
-<p><strong>Note:</strong> The significant overlap in the cholesterol boxplots between those with and without heart disease is noteworthy. This overlap could be explained by several factors: 1. <strong>Treatment Effect:</strong> Many patients may already be on cholesterol-lowering medications (like statins), which could artificially lower their cholesterol levels despite having heart disease. This medical intervention likely creates a broader range and more overlap between the groups. 2. <strong>Complex Relationship:</strong> While high cholesterol is a risk factor for heart disease, the relationship isn’t perfectly linear - other factors like HDL vs LDL ratios, genetics, and lifestyle factors all play important roles. 3. <strong>Temporal Aspect:</strong> The cholesterol measurements represent a snapshot in time and may not reflect the historical cholesterol levels that contributed to heart disease development.</p>
+<p><strong>Note:</strong> The significant overlap in the cholesterol boxplots between those with and without heart disease is noteworthy. This overlap could be explained by several factors:</p>
+</blockquote>
+<blockquote class="blockquote">
+<ol type="1">
+<li><strong>Treatment Effect:</strong> Many patients may already be on cholesterol-lowering medications (like statins), which could artificially lower their cholesterol levels despite having heart disease. This medical intervention likely creates a broader range and more overlap between the groups.</li>
+<li><strong>Complex Relationship:</strong> While high cholesterol is a risk factor for heart disease, the relationship isn’t perfectly linear - other factors like HDL vs LDL ratios, genetics, and lifestyle factors all play important roles.</li>
+<li><strong>Temporal Aspect:</strong> The cholesterol measurements represent a snapshot in time and may not reflect the historical cholesterol levels that contributed to heart disease development.</li>
+</ol>
 <p>This overlap emphasizes why we need to consider multiple features together rather than relying on any single measurement for heart disease prediction.</p>
 </blockquote>
 </section>
@@ -755,8 +762,14 @@ F1 Score: 0.886</code></pre>
 <iframe src="http://127.0.0.1:7001/6214431024/" width="100%" height="800" frameborder="0"></iframe>
 </div>
 </div>
-<p>Looking at the summary plot, we can derive the following insights: - ST Slope has the highest impact on predictions, suggesting it’s the strongest predictor of heart disease. This makes sense given that the ST_Slope feature represents the slope of the peak exercise ST segment. If we dig deepr in the individual feature contribution, we see that the model has learned how different reading on the ECG can impact the prediction. From some research online, I found the following: - <strong>Upsloping:</strong> ST segment rises ≥1 mm above baseline within 80 ms of the J-point (normal response). - <strong>Flat:</strong> Horizontal ST segment (indeterminate or borderline ischemia). - <strong>Downsloping:</strong> ST segment descends below baseline (highly suggestive of ischemia or infarction).</p>
+<p>Looking at the summary plot, we can derive the following insights:</p>
 <ul>
+<li><p>ST Slope has the highest impact on predictions, suggesting it’s the strongest predictor of heart disease. This makes sense given that the ST_Slope feature represents the slope of the peak exercise ST segment. If we dig deeper in the individual feature contribution, we see that the model has learned how different reading on the ECG can impact the prediction. From some research online, I found the following:</p>
+<ul>
+<li><strong>Upsloping:</strong> ST segment rises ≥1 mm above baseline within 80 ms of the J-point (normal response).</li>
+<li><strong>Flat:</strong> Horizontal ST segment (indeterminate or borderline ischemia).</li>
+<li><strong>Downsloping:</strong> ST segment descends below baseline (highly suggestive of ischemia or infarction).</li>
+</ul></li>
 <li><p>ChestPainType is the second strongest predictor of heart disease. We can observe how the model gives a higher score to ASY (asymptomatic) chest pain type which hints at the possibility of silent ischemia.</p></li>
 <li><p>Another interesting observation is that the model also includes interaction terms between features. For example, the model has learned that the combination of ST_Slope and Oldpeak can impact the prediction. Medical professionals can use this information to better assess patient risk, especially in cases where traditional indicators might be ambiguous.</p></li>
 </ul>
@@ -769,7 +782,7 @@ F1 Score: 0.886</code></pre>
 <iframe src="http://127.0.0.1:7001/6214434768/" width="100%" height="800" frameborder="0"></iframe>
 </div>
 </div>
-<p>The local explanations for the first 5 test samples tell us how the model arrived at each prediction. For example, in the first case, the model predicted no heart disease (score: 0.97) primarily due to the patient’s normal ST_Slope (Up) and low Oldpeak value. This kind of detailed information can lead to new knowledge that helps the medical professionals to understand and assess the patient’s risk accurately.</p>
+<p>The local explanations for the first 5 test samples tell us how the model arrived at each prediction. For example, in the first case, the model predicted no heart disease (score: 0.97) primarily due to the patient’s normal ST_Slope (Up) and low Oldpeak value. This kind of detailed information can lead to new knowledge that helps the medical professionals understand and assess the patient’s risk accurately.</p>
 </section>
 <section id="comparing-ebms-performance-with-other-models" class="level3">
 <h3 class="anchored" data-anchor-id="comparing-ebms-performance-with-other-models">Comparing EBM’s performance with other models:</h3>
@@ -872,9 +885,13 @@ ROC AUC: 0.932</code></pre>
 </section>
 <section id="a-blueprint-for-tomorrows-ai" class="level3">
 <h3 class="anchored" data-anchor-id="a-blueprint-for-tomorrows-ai">A Blueprint for Tomorrow’s AI:</h3>
-<p>The path forward is clear:<br>
-1. <strong>Prioritize transparency</strong> without sacrificing performance. 2. <strong>Demystify complex models</strong> through rigorous interpretability research.<br>
-3. <strong>Empower stakeholders</strong> with tools to interrogate and learn from AI.</p>
+<p>The path forward is clear:</p>
+<ol type="1">
+<li><strong>Prioritize transparency</strong> without sacrificing performance.</li>
+<li><strong>Demystify complex models</strong> through rigorous interpretability research.<br>
+</li>
+<li><strong>Empower stakeholders</strong> with tools to interrogate and learn from AI.</li>
+</ol>
 <p>As we chart this course, models like EBMs offer more than just a technical solution—they exemplify a philosophical shift. The future of AI isn’t just about automating tasks; it’s about creating systems that augment human expertise through clarity and collaboration.</p>
 <p>This is the frontier of machine learning: models that don’t just predict the world, but help us <em>understand</em> it.</p>
 
