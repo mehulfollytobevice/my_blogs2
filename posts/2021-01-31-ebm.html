@@ -10,7 +10,7 @@
 <meta name="dcterms.date" content="2025-01-31">
 <meta name="description" content="In this blog post, we learn about the fundamentals of Explainable Boosting Machines.">
 
-<title>Thoughts, Code and Mischief - From Black Box to Glass House - EBMs and the Art of Transparent Machine Learning</title>
+<title>Thoughts, Code and Mischief - EBMs and the Art of Transparent Machine Learning</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -148,7 +148,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">From Black Box to Glass House - EBMs and the Art of Transparent Machine Learning</h1>
+      <h1 class="title">EBMs and the Art of Transparent Machine Learning</h1>
                   <div>
         <div class="description">
           In this blog post, we learn about the fundamentals of Explainable Boosting Machines.
@@ -192,7 +192,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#downloading-the-dataset" id="toc-downloading-the-dataset" class="nav-link" data-scroll-target="#downloading-the-dataset">Downloading the dataset:</a></li>
   <li><a href="#exploratory-data-analysis" id="toc-exploratory-data-analysis" class="nav-link" data-scroll-target="#exploratory-data-analysis">Exploratory Data Analysis:</a></li>
-  <li><a href="#data-preprocessing" id="toc-data-preprocessing" class="nav-link" data-scroll-target="#data-preprocessing">Data Preprocessing:</a></li>
+  <li><a href="#model-building" id="toc-model-building" class="nav-link" data-scroll-target="#model-building">Model Building:</a></li>
+  <li><a href="#interpreting-the-model" id="toc-interpreting-the-model" class="nav-link" data-scroll-target="#interpreting-the-model">Interpreting the Model:</a></li>
+  <li><a href="#comparing-ebms-performance-with-other-models" id="toc-comparing-ebms-performance-with-other-models" class="nav-link" data-scroll-target="#comparing-ebms-performance-with-other-models">Comparing EBM’s performance with other models:</a></li>
+  </ul></li>
+  <li><a href="#interpretable-not-explainable" id="toc-interpretable-not-explainable" class="nav-link" data-scroll-target="#interpretable-not-explainable">Interpretable, not Explainable:</a></li>
+  <li><a href="#ebms-interpretable-ml-and-the-future-of-machine-learning" id="toc-ebms-interpretable-ml-and-the-future-of-machine-learning" class="nav-link" data-scroll-target="#ebms-interpretable-ml-and-the-future-of-machine-learning">EBMs, Interpretable ML and the Future of Machine Learning:</a>
+  <ul class="collapse">
+  <li><a href="#the-transparency-imperative" id="toc-the-transparency-imperative" class="nav-link" data-scroll-target="#the-transparency-imperative">The Transparency Imperative:</a></li>
+  <li><a href="#the-paradox-of-scale--large-models-larger-questions" id="toc-the-paradox-of-scale--large-models-larger-questions" class="nav-link" data-scroll-target="#the-paradox-of-scale--large-models-larger-questions">The Paradox of Scale- Large Models, Larger Questions:</a></li>
+  <li><a href="#beyond-predictions--ai-as-a-knowledge-engine" id="toc-beyond-predictions--ai-as-a-knowledge-engine" class="nav-link" data-scroll-target="#beyond-predictions--ai-as-a-knowledge-engine">Beyond Predictions- AI as a Knowledge Engine:</a></li>
+  <li><a href="#a-blueprint-for-tomorrows-ai" id="toc-a-blueprint-for-tomorrows-ai" class="nav-link" data-scroll-target="#a-blueprint-for-tomorrows-ai">A Blueprint for Tomorrow’s AI:</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -214,7 +224,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="how-do-ebms-work" class="level2">
 <h2 class="anchored" data-anchor-id="how-do-ebms-work">How do EBMs work?</h2>
-<p>What makes EBMs special is their unique combination of interpretability and modern machine learning power. At their core, EBMs work by learning how each individual feature affects the prediction, one at a time. Here’s a deeper look at how they work:</p>
+<p>At their core, EBMs work by learning how each individual feature affects the prediction, one at a time. Here’s a deeper look at how they work:</p>
 <ol type="1">
 <li><p><strong>Feature Functions:</strong> For each feature X, EBM learns a function <code>f(X)</code> that captures that feature’s contribution to the prediction. These functions are flexible and can model complex non-linear relationships.</p></li>
 <li><p><strong>Cyclic Training:</strong> The model cycles through features repeatedly:</p>
@@ -232,48 +242,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="hands-on-tutorial" class="level2">
 <h2 class="anchored" data-anchor-id="hands-on-tutorial">Hands-On Tutorial:</h2>
-<div id="cell-7" class="cell" data-execution_count="1">
+<div id="cell-7" class="cell" data-execution_count="55">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> kagglehub</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.feature_selection <span class="im">import</span> mutual_info_classif</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>matplotlib inline</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>
-Bad key text.latex.preview in file /Users/mehuljain/miniconda3/envs/aaamlp/lib/python3.10/site-packages/matplotlib/mpl-data/stylelib/_classic_test.mplstyle, line 123 ('text.latex.preview : False')
-You probably need to get an updated matplotlibrc file from
-https://github.com/matplotlib/matplotlib/blob/v3.7.1/matplotlibrc.template
-or from the matplotlib source distribution
-
-Bad key mathtext.fallback_to_cm in file /Users/mehuljain/miniconda3/envs/aaamlp/lib/python3.10/site-packages/matplotlib/mpl-data/stylelib/_classic_test.mplstyle, line 155 ('mathtext.fallback_to_cm : True  # When True, use symbols from the Computer Modern')
-You probably need to get an updated matplotlibrc file from
-https://github.com/matplotlib/matplotlib/blob/v3.7.1/matplotlibrc.template
-or from the matplotlib source distribution
-
-Bad key savefig.jpeg_quality in file /Users/mehuljain/miniconda3/envs/aaamlp/lib/python3.10/site-packages/matplotlib/mpl-data/stylelib/_classic_test.mplstyle, line 418 ('savefig.jpeg_quality: 95       # when a jpeg is saved, the default quality parameter.')
-You probably need to get an updated matplotlibrc file from
-https://github.com/matplotlib/matplotlib/blob/v3.7.1/matplotlibrc.template
-or from the matplotlib source distribution
-
-Bad key keymap.all_axes in file /Users/mehuljain/miniconda3/envs/aaamlp/lib/python3.10/site-packages/matplotlib/mpl-data/stylelib/_classic_test.mplstyle, line 466 ('keymap.all_axes : a                 # enable all axes')
-You probably need to get an updated matplotlibrc file from
-https://github.com/matplotlib/matplotlib/blob/v3.7.1/matplotlibrc.template
-or from the matplotlib source distribution
-
-Bad key animation.avconv_path in file /Users/mehuljain/miniconda3/envs/aaamlp/lib/python3.10/site-packages/matplotlib/mpl-data/stylelib/_classic_test.mplstyle, line 477 ('animation.avconv_path: avconv     # Path to avconv binary. Without full path')
-You probably need to get an updated matplotlibrc file from
-https://github.com/matplotlib/matplotlib/blob/v3.7.1/matplotlibrc.template
-or from the matplotlib source distribution
-
-Bad key animation.avconv_args in file /Users/mehuljain/miniconda3/envs/aaamlp/lib/python3.10/site-packages/matplotlib/mpl-data/stylelib/_classic_test.mplstyle, line 479 ('animation.avconv_args:            # Additional arguments to pass to avconv')
-You probably need to get an updated matplotlibrc file from
-https://github.com/matplotlib/matplotlib/blob/v3.7.1/matplotlibrc.template
-or from the matplotlib source distribution</code></pre>
-</div>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> roc_auc_score</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score, precision_score, recall_score, f1_score</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> interpret <span class="im">import</span> show</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> interpret.glassbox <span class="im">import</span> ExplainableBoostingClassifier</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> xgboost <span class="im">as</span> xgb</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Suppress warnings</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">'ignore'</span>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>matplotlib inline</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="downloading-the-dataset" class="level3">
 <h3 class="anchored" data-anchor-id="downloading-the-dataset">Downloading the dataset:</h3>
@@ -285,20 +273,20 @@ or from the matplotlib source distribution</code></pre>
 <li>This will download a <code>kaggle.json</code> file - place it in <code>~/.kaggle/</code> on Linux/Mac or <code>C:\Users\&lt;Windows-username&gt;\.kaggle\</code> on Windows.</li>
 </ol>
 <p>Once set up, you can download the dataset using the Kaggle API. We’ll show the code for this in the next cell.</p>
-<div id="cell-10" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Download latest version</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>path <span class="op">=</span> kagglehub.dataset_download(<span class="st">"fedesoriano/heart-failure-prediction"</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Path to dataset files:"</span>, path)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-10" class="cell" data-execution_count="56">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Download latest version</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>path <span class="op">=</span> kagglehub.dataset_download(<span class="st">"fedesoriano/heart-failure-prediction"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Path to dataset files:"</span>, path)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Path to dataset files: /Users/mehuljain/.cache/kagglehub/datasets/fedesoriano/heart-failure-prediction/versions/1</code></pre>
 </div>
 </div>
 <p>Let’s load the dataset:</p>
-<div id="cell-12" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span> pd.read_csv(path <span class="op">+</span> <span class="st">"/heart.csv"</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="3">
+<div id="cell-12" class="cell" data-execution_count="57">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span> pd.read_csv(path <span class="op">+</span> <span class="st">"/heart.csv"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="57">
 <div>
 <div>
 
@@ -419,26 +407,26 @@ or from the matplotlib source distribution</code></pre>
 <li><strong>ST_Slope</strong>: Slope of the peak exercise ST segment (Up, Flat, Down)</li>
 <li><strong>HeartDisease</strong>: Target variable, indicates presence of heart disease (1 = yes, 0 = no)</li>
 </ul>
-<p>Using these features, we’ll train an Explainable Boosting Machine (EBM) to predict whether a patient is likely to have heart failure. EBMs are particularly useful in healthcare applications because they provide interpretable predictions while maintaining high accuracy, allowing us to understand which factors contribute most to the prediction.</p>
+<p>Using these features, we’ll train an Explainable Boosting Machine (EBM) to predict whether a patient is likely to have heart failure.</p>
 </section>
 <section id="exploratory-data-analysis" class="level3">
 <h3 class="anchored" data-anchor-id="exploratory-data-analysis">Exploratory Data Analysis:</h3>
 <p>Let’s start by exploring the dataset with some basic visualizations and statistics.</p>
-<div id="cell-16" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check for missing values</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>missing_values <span class="op">=</span> df.isnull().<span class="bu">sum</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-16" class="cell" data-execution_count="58">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check for missing values</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>missing_values <span class="op">=</span> df.isnull().<span class="bu">sum</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-17" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check for class imbalance</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>class_counts <span class="op">=</span> df[<span class="st">'HeartDisease'</span>].value_counts()</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize class distribution</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>plt.hist(df[<span class="st">'HeartDisease'</span>], bins<span class="op">=</span><span class="dv">2</span>, rwidth<span class="op">=</span><span class="fl">0.8</span>)</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Distribution of Heart Disease Cases'</span>)</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Heart Disease (0 = No, 1 = Yes)'</span>)</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Count'</span>)</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-17" class="cell" data-execution_count="59">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check for class imbalance</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>class_counts <span class="op">=</span> df[<span class="st">'HeartDisease'</span>].value_counts()</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize class distribution</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>plt.hist(df[<span class="st">'HeartDisease'</span>], bins<span class="op">=</span><span class="dv">2</span>, rwidth<span class="op">=</span><span class="fl">0.8</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Distribution of Heart Disease Cases'</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Heart Disease (0 = No, 1 = Yes)'</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Count'</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -451,26 +439,26 @@ or from the matplotlib source distribution</code></pre>
 <p>Next, we’ll analyze the mutual information between our features and the target variable. Mutual information (MI) is a measure from information theory that quantifies the mutual dependence between two variables - specifically, it measures how much information one variable provides about another.</p>
 <p>When used in feature analysis, MI helps us understand: 1. The strength of the relationship between each feature and the target variable (HeartDisease) 2. The amount of uncertainty about the target that is reduced by knowing a feature 3. Non-linear relationships that might not be captured by simpler correlation metrics</p>
 <p>Unlike correlation coefficients, mutual information: - Can detect non-linear relationships - Is always non-negative (0 indicates no mutual information, higher values indicate stronger relationships) - Doesn’t assume any particular distribution of the variables</p>
-<div id="cell-19" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df.copy()</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> X.pop(<span class="st">"HeartDisease"</span>)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Label encoding for categoricals</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> colname <span class="kw">in</span> X.select_dtypes(<span class="st">"object"</span>):</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    X[colname], _ <span class="op">=</span> X[colname].factorize()</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>discrete_features <span class="op">=</span> X.dtypes <span class="op">==</span> <span class="bu">int</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-19" class="cell" data-execution_count="60">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df.copy()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> X.pop(<span class="st">"HeartDisease"</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Label encoding for categoricals</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> colname <span class="kw">in</span> X.select_dtypes(<span class="st">"object"</span>):</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    X[colname], _ <span class="op">=</span> X[colname].factorize()</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>discrete_features <span class="op">=</span> X.dtypes <span class="op">==</span> <span class="bu">int</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-20" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> make_mi_scores(X, y, discrete_features):</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    mi_scores <span class="op">=</span> mutual_info_classif(X, y, discrete_features<span class="op">=</span>discrete_features)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    mi_scores <span class="op">=</span> pd.Series(mi_scores, name<span class="op">=</span><span class="st">"MI Scores"</span>, index<span class="op">=</span>X.columns)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    mi_scores <span class="op">=</span> mi_scores.sort_values(ascending<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mi_scores</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>mi_scores <span class="op">=</span> make_mi_scores(X, y, discrete_features)</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>mi_scores[::<span class="dv">3</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="7">
+<div id="cell-20" class="cell" data-execution_count="61">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> make_mi_scores(X, y, discrete_features):</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    mi_scores <span class="op">=</span> mutual_info_classif(X, y, discrete_features<span class="op">=</span>discrete_features)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    mi_scores <span class="op">=</span> pd.Series(mi_scores, name<span class="op">=</span><span class="st">"MI Scores"</span>, index<span class="op">=</span>X.columns)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    mi_scores <span class="op">=</span> mi_scores.sort_values(ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mi_scores</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>mi_scores <span class="op">=</span> make_mi_scores(X, y, discrete_features)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>mi_scores[::<span class="dv">3</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="61">
 <pre><code>Cholesterol      0.223062
 ChestPainType    0.155988
 Age              0.073583
@@ -479,18 +467,18 @@ Name: MI Scores, dtype: float64</code></pre>
 </div>
 </div>
 <p>Now, let’s plot the MI scores for each feature:</p>
-<div id="cell-22" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_mi_scores(scores):</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    scores <span class="op">=</span> scores.sort_values(ascending<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    width <span class="op">=</span> np.arange(<span class="bu">len</span>(scores))</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    ticks <span class="op">=</span> <span class="bu">list</span>(scores.index)</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    plt.barh(width, scores)</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    plt.yticks(width, ticks)</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="st">"Mutual Information Scores"</span>)</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>plt.figure(dpi<span class="op">=</span><span class="dv">100</span>, figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">5</span>))</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>plot_mi_scores(mi_scores)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-22" class="cell" data-execution_count="62">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_mi_scores(scores):</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    scores <span class="op">=</span> scores.sort_values(ascending<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    width <span class="op">=</span> np.arange(<span class="bu">len</span>(scores))</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    ticks <span class="op">=</span> <span class="bu">list</span>(scores.index)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    plt.barh(width, scores)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    plt.yticks(width, ticks)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="st">"Mutual Information Scores"</span>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>plt.figure(dpi<span class="op">=</span><span class="dv">100</span>, figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">5</span>))</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>plot_mi_scores(mi_scores)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -499,15 +487,15 @@ Name: MI Scores, dtype: float64</code></pre>
 </div>
 </div>
 </div>
-<div id="cell-23" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>mi_scores</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="9">
+<div id="cell-23" class="cell" data-execution_count="63">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>mi_scores</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="63">
 <pre><code>Cholesterol       0.223062
 ST_Slope          0.207474
 MaxHR             0.161544
 ChestPainType     0.155988
 ExerciseAngina    0.131680
-Oldpeak           0.114810
+Oldpeak           0.105685
 Age               0.073583
 RestingBP         0.062498
 Sex               0.047477
@@ -524,33 +512,33 @@ Name: MI Scores, dtype: float64</code></pre>
 <li>FastingBS (blood sugar) shows a weaker but still notable relationship (0.04).</li>
 </ul>
 <p>This suggests that cholesterol levels, ST_Slope, maximum heart rate achieved during exercise and chest pain characteristics should be key features to focus on in our model. The relatively lower scores for age and blood sugar indicate they may be less predictive, though still potentially useful.</p>
-<p>Can we look at some scatter plots to confirm the relationship between the features and the target variable?</p>
-<div id="cell-25" class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create box plots to better show the relationship between features and heart disease</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">5</span>))</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot Cholesterol distribution by Heart Disease</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">131</span>)</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>sns.boxplot(x<span class="op">=</span><span class="st">'HeartDisease'</span>, y<span class="op">=</span><span class="st">'Cholesterol'</span>, data<span class="op">=</span>pd.concat([X, y], axis<span class="op">=</span><span class="dv">1</span>))</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Heart Disease'</span>)</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Cholesterol'</span>)</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Cholesterol Distribution by Heart Disease'</span>)</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot MaxHR distribution by Heart Disease</span></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">132</span>)</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>sns.boxplot(x<span class="op">=</span><span class="st">'HeartDisease'</span>, y<span class="op">=</span><span class="st">'MaxHR'</span>, data<span class="op">=</span>pd.concat([X, y], axis<span class="op">=</span><span class="dv">1</span>))</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Heart Disease'</span>)</span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Max Heart Rate'</span>)</span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Max Heart Rate Distribution by Heart Disease'</span>)</span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot Age distribution by Heart Disease</span></span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">133</span>)</span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>sns.boxplot(x<span class="op">=</span><span class="st">'HeartDisease'</span>, y<span class="op">=</span><span class="st">'Age'</span>, data<span class="op">=</span>pd.concat([X, y], axis<span class="op">=</span><span class="dv">1</span>))</span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Heart Disease'</span>)</span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Age'</span>)</span>
-<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Age Distribution by Heart Disease'</span>)</span>
-<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Can we look at some box plots to confirm the relationship between the features and the target variable?</p>
+<div id="cell-25" class="cell" data-execution_count="64">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create box plots to better show the relationship between features and heart disease</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">5</span>))</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot Cholesterol distribution by Heart Disease</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">131</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>sns.boxplot(x<span class="op">=</span><span class="st">'HeartDisease'</span>, y<span class="op">=</span><span class="st">'Cholesterol'</span>, data<span class="op">=</span>pd.concat([X, y], axis<span class="op">=</span><span class="dv">1</span>))</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Heart Disease'</span>)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Cholesterol'</span>)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Cholesterol Distribution by Heart Disease'</span>)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot MaxHR distribution by Heart Disease</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">132</span>)</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>sns.boxplot(x<span class="op">=</span><span class="st">'HeartDisease'</span>, y<span class="op">=</span><span class="st">'MaxHR'</span>, data<span class="op">=</span>pd.concat([X, y], axis<span class="op">=</span><span class="dv">1</span>))</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Heart Disease'</span>)</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Max Heart Rate'</span>)</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Max Heart Rate Distribution by Heart Disease'</span>)</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot Age distribution by Heart Disease</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">133</span>)</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>sns.boxplot(x<span class="op">=</span><span class="st">'HeartDisease'</span>, y<span class="op">=</span><span class="st">'Age'</span>, data<span class="op">=</span>pd.concat([X, y], axis<span class="op">=</span><span class="dv">1</span>))</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Heart Disease'</span>)</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Age'</span>)</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Age Distribution by Heart Disease'</span>)</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -565,19 +553,22 @@ Name: MI Scores, dtype: float64</code></pre>
 <p>This overlap emphasizes why we need to consider multiple features together rather than relying on any single measurement for heart disease prediction.</p>
 </blockquote>
 </section>
-<section id="data-preprocessing" class="level3">
-<h3 class="anchored" data-anchor-id="data-preprocessing">Data Preprocessing:</h3>
+<section id="model-building" class="level3">
+<h3 class="anchored" data-anchor-id="model-building">Model Building:</h3>
+<p>Before building the model, we need to preprocess the data. So, what about it?</p>
 <p>Explainable Boosting Machines (EBMs) handle preprocessing internally in an intelligent way:</p>
 <ul>
-<li>Categorical features are automatically one-hot encoded</li>
+<li>Categorical features are automatically label encoded</li>
 <li>Continuous features are binned intelligently during training</li>
 <li>Missing values are handled automatically</li>
 <li>Feature scaling is not required since EBMs learn optimal feature transformations</li>
 </ul>
 <p>This means we can use our raw data directly without extensive preprocessing, which is one of the advantages of using EBMs. The model will learn the appropriate transformations for each feature during training while maintaining interpretability.</p>
-<div id="cell-29" class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="11">
+<p><em>Isn’t this cool? 🤯</em></p>
+<div id="cell-29" class="cell" data-execution_count="65">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># one look at the data before we build the model</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="65">
 <div>
 <div>
 
@@ -683,23 +674,19 @@ Name: MI Scores, dtype: float64</code></pre>
 </div>
 </div>
 </div>
-<div id="cell-30" class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> roc_auc_score</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> interpret.glassbox <span class="im">import</span> ExplainableBoostingClassifier</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df.iloc[:, :<span class="op">-</span><span class="dv">1</span>]</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> df.iloc[:, <span class="op">-</span><span class="dv">1</span>]</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>seed <span class="op">=</span> <span class="dv">42</span></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>np.random.seed(seed)</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.20</span>, random_state<span class="op">=</span>seed)</span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>ebm <span class="op">=</span> ExplainableBoostingClassifier()</span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>ebm.fit(X_train, y_train)</span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>auc <span class="op">=</span> roc_auc_score(y_test, ebm.predict_proba(X_test)[:, <span class="dv">1</span>])</span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"AUC: </span><span class="sc">{:.3f}</span><span class="st">"</span>.<span class="bu">format</span>(auc))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Splitting the data into train and test sets:</p>
+<div id="cell-31" class="cell" data-execution_count="66">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df.iloc[:, :<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> df.iloc[:, <span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>seed <span class="op">=</span> <span class="dv">42</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>np.random.seed(seed)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.20</span>, random_state<span class="op">=</span>seed)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s train a simple EBM model:</p>
+<div id="cell-33" class="cell" data-execution_count="67">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>ebm <span class="op">=</span> ExplainableBoostingClassifier()</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>ebm.fit(X_train, y_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>/Users/mehuljain/miniconda3/envs/aaamlp/lib/python3.10/site-packages/pandas/core/arrays/masked.py:60: UserWarning: Pandas requires version '1.3.6' or newer of 'bottleneck' (version '1.3.5' currently installed).
   from pandas.core import (
@@ -718,11 +705,178 @@ Name: MI Scores, dtype: float64</code></pre>
 /Users/mehuljain/miniconda3/envs/aaamlp/lib/python3.10/site-packages/pandas/core/arrays/masked.py:60: UserWarning: Pandas requires version '1.3.6' or newer of 'bottleneck' (version '1.3.5' currently installed).
   from pandas.core import (</code></pre>
 </div>
+<div class="cell-output cell-output-display" data-execution_count="67">
+<style>#sk-container-id-2 {color: black;background-color: white;}#sk-container-id-2 pre{padding: 0;}#sk-container-id-2 div.sk-toggleable {background-color: white;}#sk-container-id-2 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-2 label.sk-toggleable__label-arrow:before {content: "▸";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-2 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-2 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-2 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-2 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-2 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-2 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: "▾";}#sk-container-id-2 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-2 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-2 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-2 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-2 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-2 div.sk-parallel-item::after {content: "";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-2 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-2 div.sk-serial::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-2 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-2 div.sk-item {position: relative;z-index: 1;}#sk-container-id-2 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-2 div.sk-item::before, #sk-container-id-2 div.sk-parallel-item::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-2 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-2 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-2 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-2 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-2 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-2 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-2 div.sk-label-container {text-align: center;}#sk-container-id-2 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-2 div.sk-text-repr-fallback {display: none;}</style><div id="sk-container-id-2" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>ExplainableBoostingClassifier()</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br>On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden=""><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-2" type="checkbox" checked=""><label for="sk-estimator-id-2" class="sk-toggleable__label sk-toggleable__label-arrow">ExplainableBoostingClassifier</label><div class="sk-toggleable__content"><pre>ExplainableBoostingClassifier()</pre></div></div></div></div></div>
+</div>
+</div>
+<p>How does it perform?</p>
+<div id="cell-35" class="cell" data-execution_count="68">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>auc <span class="op">=</span> roc_auc_score(y_test, ebm.predict_proba(X_test)[:, <span class="dv">1</span>])</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"AUC: </span><span class="sc">{:.3f}</span><span class="st">"</span>.<span class="bu">format</span>(auc))</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate additional metrics</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>accuracy <span class="op">=</span> accuracy_score(y_test, ebm.predict(X_test))</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>precision <span class="op">=</span> precision_score(y_test, ebm.predict(X_test))</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>recall <span class="op">=</span> recall_score(y_test, ebm.predict(X_test))</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>f1 <span class="op">=</span> f1_score(y_test, ebm.predict(X_test))</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Accuracy: </span><span class="sc">{:.3f}</span><span class="st">"</span>.<span class="bu">format</span>(accuracy))</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Precision: </span><span class="sc">{:.3f}</span><span class="st">"</span>.<span class="bu">format</span>(precision)) </span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Recall: </span><span class="sc">{:.3f}</span><span class="st">"</span>.<span class="bu">format</span>(recall))</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"F1 Score: </span><span class="sc">{:.3f}</span><span class="st">"</span>.<span class="bu">format</span>(f1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>AUC: 0.931</code></pre>
+<pre><code>AUC: 0.931
+Accuracy: 0.870
+Precision: 0.903
+Recall: 0.869
+F1 Score: 0.886</code></pre>
 </div>
 </div>
-<p>This blog post is a work in progress. I will update it with the code for the rest of the tutorial soon. 🚧</p>
+<p>Looking at multiple performance metrics gives us a more comprehensive view of our model’s capabilities. While AUC-ROC (0.931) shows strong overall discriminative ability, examining accuracy (0.87), precision (0.90), recall (0.86), and F1-score (0.88) provides deeper insights:</p>
+<ul>
+<li>AUC-ROC indicates strong ability to distinguish between classes</li>
+<li>Accuracy tells us the overall correctness of predictions</li>
+<li>Precision shows how many of our positive predictions were actually correct</li>
+<li>Recall indicates how many actual positive cases we caught</li>
+<li>F1-score balances precision and recall</li>
+</ul>
+<p>This multi-metric approach is especially important for medical applications like heart disease prediction, where different types of errors (false positives vs false negatives) can have varying consequences. A model might have high accuracy but poor recall, potentially missing critical cases that require medical attention.</p>
+</section>
+<section id="interpreting-the-model" class="level3">
+<h3 class="anchored" data-anchor-id="interpreting-the-model">Interpreting the Model:</h3>
+<p>Now that we have our model, we can interpret the results and look behind the scenes to see how it’s making predictions.</p>
+<p>Let’s start by looking at the global interpretation of the model.</p>
+<p><strong>What is global interpretation?</strong></p>
+<p>Global interpretations help us understand the model’s behavior as a whole. It gives us a clear picture of the model’s strengths and weaknesses, and how it makes predictions. The initial plot is a good starting point to get an overview of the model’s behavior. To dig deeper, we can use the drop-down menu to search, filter and see how individual features contribute to the model’s predictions.</p>
+<div id="cell-39" class="cell" data-execution_count="69">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>show(ebm.explain_global())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<!-- http://127.0.0.1:7001/6214431024/ -->
+<iframe src="http://127.0.0.1:7001/6214431024/" width="100%" height="800" frameborder="0"></iframe>
+</div>
+</div>
+<p>Looking at the summary plot, we can derive the following insights: - ST Slope has the highest impact on predictions, suggesting it’s the strongest predictor of heart disease. This makes sense given that the ST_Slope feature represents the slope of the peak exercise ST segment. If we dig deepr in the individual feature contribution, we see that the model has learned how different reading on the ECG can impact the prediction. From some research online, I found the following: - <strong>Upsloping:</strong> ST segment rises ≥1 mm above baseline within 80 ms of the J-point (normal response). - <strong>Flat:</strong> Horizontal ST segment (indeterminate or borderline ischemia). - <strong>Downsloping:</strong> ST segment descends below baseline (highly suggestive of ischemia or infarction).</p>
+<ul>
+<li><p>ChestPainType is the second strongest predictor of heart disease. We can observe how the model gives a higher score to ASY (asymptomatic) chest pain type which hints at the possibility of silent ischemia.</p></li>
+<li><p>Another interesting observation is that the model also includes interaction terms between features. For example, the model has learned that the combination of ST_Slope and Oldpeak can impact the prediction. Medical professionals can use this information to better assess patient risk, especially in cases where traditional indicators might be ambiguous.</p></li>
+</ul>
+<p>Another reason why EBMs/interpretable models are so powerful is that they can help us find the bias in the data. For example, we can see that the model is biased towards predicting heart disease for males. This is likely due to the fact that the dataset is imbalanced and has more males than females. More specifically, the dataset has more males with heart disease than females.</p>
+<p>After getting the overview of the model, we can inspect the local explanations to see how individual predictions are made. For EBMs, these explanations are exact and perfectly describe how the model made the decision. These explanations are great for describing to the end users which features played the biggest role in a given prediction.</p>
+<div id="cell-41" class="cell" data-execution_count="70">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>show(ebm.explain_local(X_test[:<span class="dv">5</span>], y_test[:<span class="dv">5</span>]), <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<!-- http://127.0.0.1:7001/6214434768/ -->
+<iframe src="http://127.0.0.1:7001/6214434768/" width="100%" height="800" frameborder="0"></iframe>
+</div>
+</div>
+<p>The local explanations for the first 5 test samples tell us how the model arrived at each prediction. For example, in the first case, the model predicted no heart disease (score: 0.97) primarily due to the patient’s normal ST_Slope (Up) and low Oldpeak value. This kind of detailed information can lead to new knowledge that helps the medical professionals to understand and assess the patient’s risk accurately.</p>
+</section>
+<section id="comparing-ebms-performance-with-other-models" class="level3">
+<h3 class="anchored" data-anchor-id="comparing-ebms-performance-with-other-models">Comparing EBM’s performance with other models:</h3>
+<p>In this section, we’ll compare the performance of EBM’s with other popular tree-based models:</p>
+<ol type="1">
+<li><strong>Random Forest:</strong> An ensemble learning method that operates by constructing multiple decision trees and outputting the mean prediction of the individual trees. Random forests are known for:
+<ul>
+<li>High accuracy and good generalization</li>
+<li>Ability to handle both numerical and categorical features</li>
+<li>Built-in feature importance measures</li>
+</ul></li>
+<li><strong>XGBoost:</strong> A highly optimized gradient boosting framework that has dominated many machine learning competitions. XGBoost is popular for:
+<ul>
+<li>Superior predictive accuracy</li>
+<li>Fast training and inference speed</li>
+<li>Effective handling of missing values</li>
+</ul></li>
+</ol>
+<p>Both models are strong baselines for tabular data problems like our heart disease prediction task. However, unlike EBM, these models are considered “black box” as their predictions are not as easily interpretable. By comparing their performance metrics with EBM, we can evaluate whether we’re sacrificing predictive power for interpretability.</p>
+<div id="cell-45" class="cell" data-execution_count="71">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Preprocess categorical variables</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>categorical_features <span class="op">=</span> [<span class="st">'Sex'</span>, <span class="st">'ChestPainType'</span>, <span class="st">'RestingECG'</span>, <span class="st">'ExerciseAngina'</span>, <span class="st">'ST_Slope'</span>]</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>X_train_encoded <span class="op">=</span> pd.get_dummies(X_train, columns<span class="op">=</span>categorical_features)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>X_test_encoded <span class="op">=</span> pd.get_dummies(X_test, columns<span class="op">=</span>categorical_features)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure test set has same columns as train set</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>missing_cols <span class="op">=</span> <span class="bu">set</span>(X_train_encoded.columns) <span class="op">-</span> <span class="bu">set</span>(X_test_encoded.columns)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> missing_cols:</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    X_test_encoded[col] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>X_test_encoded <span class="op">=</span> X_test_encoded[X_train_encoded.columns]</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Train Random Forest</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>rf <span class="op">=</span> RandomForestClassifier(n_estimators<span class="op">=</span><span class="dv">100</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>rf.fit(X_train_encoded, y_train)</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Train XGBoost </span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>xgb_model <span class="op">=</span> xgb.XGBClassifier(random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>xgb_model.fit(X_train_encoded, y_train)</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Get predictions</span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>rf_pred <span class="op">=</span> rf.predict(X_test_encoded)</span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>rf_pred_proba <span class="op">=</span> rf.predict_proba(X_test_encoded)[:,<span class="dv">1</span>]</span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>xgb_pred <span class="op">=</span> xgb_model.predict(X_test_encoded)</span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>xgb_pred_proba <span class="op">=</span> xgb_model.predict_proba(X_test_encoded)[:,<span class="dv">1</span>]</span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate metrics</span></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Random Forest Performance:"</span>)</span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Accuracy: </span><span class="sc">{</span>accuracy_score(y_test, rf_pred)<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"ROC AUC: </span><span class="sc">{</span>roc_auc_score(y_test, rf_pred_proba)<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">XGBoost Performance:"</span>)</span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Accuracy: </span><span class="sc">{</span>accuracy_score(y_test, xgb_pred)<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"ROC AUC: </span><span class="sc">{</span>roc_auc_score(y_test, xgb_pred_proba)<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[22:47:17] WARNING: /var/folders/nz/j6p8yfhx1mv_0grj5xl4650h0000gp/T/abs_eek2t0c4ro/croots/recipe/xgboost-split_1659548960591/work/src/learner.cc:1115: Starting in XGBoost 1.3.0, the default evaluation metric used with the objective 'binary:logistic' was changed from 'error' to 'logloss'. Explicitly set eval_metric if you'd like to restore the old behavior.
+Random Forest Performance:
+Accuracy: 0.880
+ROC AUC: 0.944
+
+XGBoost Performance:
+Accuracy: 0.875
+ROC AUC: 0.932</code></pre>
+</div>
+</div>
+<p>Voila! Looking at the performance metrics above, we can see that EBM achieves comparable accuracy and ROC AUC scores to both Random Forest and XGBoost models. This is quite remarkable, as EBMs manage to maintain competitive predictive power while offering much greater interpretability.</p>
+</section>
+</section>
+<section id="interpretable-not-explainable" class="level2">
+<h2 class="anchored" data-anchor-id="interpretable-not-explainable">Interpretable, not Explainable:</h2>
+<p>You may have noticed the frequent use of the term “interpretable” throughout this blog post. Similarly, “explainable” is another buzzword that often crops up in discussions about AI and machine learning. While these terms are often used interchangeably, there’s a subtle yet significant difference between them that’s worth exploring.</p>
+<p>Interpretable models, like EBMs, are inherently transparent - their inner workings can be directly understood by examining how they process inputs to arrive at outputs. The logic they use is clear and accessible by design. In contrast, explainable models start as “black boxes” and require post-hoc explanation techniques to understand their decisions.</p>
+<p>For example, let’s talk about some popular explanation techniques like SHAP (SHapley Additive exPlanations) and LIME (Local Interpretable Model-agnostic Explanations). SHAP uses game theory concepts to attribute importance to each feature for a specific prediction. LIME creates a simpler, interpretable model that approximates the complex model’s behavior in the local region around a prediction.</p>
+<p><strong>Explainability</strong> is very useful in certain cases, but it has its own set of limitations:</p>
+<ol type="1">
+<li><strong>Fidelity Issues:</strong> The explanations may not perfectly reflect the actual model’s reasoning.</li>
+<li><strong>Stability:</strong> Different explanation techniques can provide inconsistent or contradictory explanations, especially for smaller datasets.</li>
+<li><strong>Computational Cost:</strong> Generating explanations often requires significant computational resources.</li>
+<li><strong>False Confidence:</strong> Explanations can give a false sense of understanding while missing crucial model behaviors.</li>
+<li><strong>Local vs Global:</strong> Many techniques only explain individual predictions, not the model’s overall behavior.</li>
+</ol>
+<p>This is why truly interpretable models like EBMs are particularly valuable - they don’t require these additional explanation layers because their decision-making process is transparent from the start. The interpretability is built into the model architecture itself, rather than being retrofitted through external explanation techniques.</p>
+</section>
+<section id="ebms-interpretable-ml-and-the-future-of-machine-learning" class="level2">
+<h2 class="anchored" data-anchor-id="ebms-interpretable-ml-and-the-future-of-machine-learning">EBMs, Interpretable ML and the Future of Machine Learning:</h2>
+<p>In this blog post, we learned about EBMs through a hands-on tutorial. We saw how they can used to create new knowledge and actionable insights from data while maintaining a high predictive power. But as we stand at the precipice of a machine learning revolution, one question looms: <em>What comes next?</em></p>
+<section id="the-transparency-imperative" class="level3">
+<h3 class="anchored" data-anchor-id="the-transparency-imperative">The Transparency Imperative:</h3>
+<p>The rapid adoption of ML across industries—from healthcare diagnostics to financial forecasting—has exposed a critical bottleneck: <strong>the opacity of “black-box” models</strong>. Stakeholders increasingly demand transparency to validate decisions, comply with regulations, and build trust. This is where EBMs and similar interpretable architectures will shine. By design, they reveal <em>how</em> and <em>why</em> predictions are made, bridging the gap between technical teams and decision-makers.</p>
+</section>
+<section id="the-paradox-of-scale--large-models-larger-questions" class="level3">
+<h3 class="anchored" data-anchor-id="the-paradox-of-scale--large-models-larger-questions">The Paradox of Scale- Large Models, Larger Questions:</h3>
+<p>While trillion-parameter language models dazzle the world with their capabilities, their inner workings remain shrouded in mystery. As these systems grow more powerful and more embedded in high-stakes domains, the need for interpretability becomes urgent. How do we audit models that even their creators struggle to fully comprehend? How do we ensure they align with human values?</p>
+<p>This challenge extends far beyond EBMs. Interpretability is not a feature—it’s a <strong>fundamental requirement</strong> for ethical AI. It represents a collective journey for researchers, developers, and policymakers to reimagine ML systems as collaborators rather than oracles.</p>
+</section>
+<section id="beyond-predictions--ai-as-a-knowledge-engine" class="level3">
+<h3 class="anchored" data-anchor-id="beyond-predictions--ai-as-a-knowledge-engine">Beyond Predictions- AI as a Knowledge Engine:</h3>
+<p>The true promise of interpretable models lies in their ability to <strong>generate genuine knowledge</strong>. In healthcare, EBMs might uncover previously overlooked risk factors; in climate science, they could decode complex environmental interactions. Unlike black-box systems that simply output decisions, these models contribute to human understanding by revealing patterns and relationships within data.</p>
+</section>
+<section id="a-blueprint-for-tomorrows-ai" class="level3">
+<h3 class="anchored" data-anchor-id="a-blueprint-for-tomorrows-ai">A Blueprint for Tomorrow’s AI:</h3>
+<p>The path forward is clear:<br>
+1. <strong>Prioritize transparency</strong> without sacrificing performance. 2. <strong>Demystify complex models</strong> through rigorous interpretability research.<br>
+3. <strong>Empower stakeholders</strong> with tools to interrogate and learn from AI.</p>
+<p>As we chart this course, models like EBMs offer more than just a technical solution—they exemplify a philosophical shift. The future of AI isn’t just about automating tasks; it’s about creating systems that augment human expertise through clarity and collaboration.</p>
+<p>This is the frontier of machine learning: models that don’t just predict the world, but help us <em>understand</em> it.</p>
 
 
 </section>
