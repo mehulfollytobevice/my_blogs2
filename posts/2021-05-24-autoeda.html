@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.554">
+<meta name="generator" content="quarto-1.7.30">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -10,7 +10,7 @@
 <meta name="dcterms.date" content="2021-05-24">
 <meta name="description" content="EDA is one of the most important steps in the data science pipeline. In this blog post, we explore automated exploratory data analysis and examine it’s utility.">
 
-<title>Thoughts, Code and Mischief - Exploring Auto-EDA in Python</title>
+<title>Exploring Auto-EDA in Python – Thoughts, Code and Mischief</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -24,8 +24,9 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: middle;
 }
 /* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -67,15 +68,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-de070a7b0ab54f8780927367ac907214.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-c1fac2584b48ed01fb6e278e36375074.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -112,7 +114,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../styles.css">
 </head>
 
-<body class="nav-fixed">
+<body class="nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -124,7 +126,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -140,7 +142,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
-          <div class="quarto-navbar-tools">
+            <div class="quarto-navbar-tools">
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -228,7 +230,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="installing-the-libraries">Installing the libraries</h3>
 <p>First, we are going to install our python libraries. To see the install instructions of the libraries in detail, you can check out their Github repositories: - <a href="https://github.com/fbdesignpro/sweetviz">SweetViz</a> - <a href="https://github.com/pandas-profiling/pandas-profiling">Pandas Profiling</a> - <a href="https://github.com/AutoViML/AutoViz">AutoViz</a></p>
 <p>We are going to use the ‘pip’ command as usual to install the libraries.</p>
-<div id="cell-5" class="cell" data-outputid="ea0604d5-4ee6-4d1e-c8b7-76653156df81" data-execution_count="1">
+<div id="cell-5" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="ea0604d5-4ee6-4d1e-c8b7-76653156df81" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#collapse-output</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install sweetviz autoviz </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -306,129 +308,248 @@ Successfully installed autoviz-0.0.81 sweetviz-2.1.0 tqdm-4.60.0</code></pre>
 </div>
 </div>
 <p>Pandas Profiling provides some specific instructions for installation so let’s follow those.</p>
-<div id="cell-7" class="cell" data-outputid="4bcad03e-8b3c-42c7-d1d1-b3cdfef9a3f4" data-execution_count="2">
+<div id="cell-7" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="4bcad03e-8b3c-42c7-d1d1-b3cdfef9a3f4" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#collapse-output</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>{sys.executable} <span class="op">-</span>m pip install <span class="op">-</span>U pandas<span class="op">-</span>profiling[notebook]</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>jupyter nbextension enable <span class="op">--</span>py widgetsnbextension</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Collecting pandas-profiling[notebook]
+<div class="ansi-escaped-output">
+<pre>Collecting pandas-profiling[notebook]
+
   Downloading https://files.pythonhosted.org/packages/3b/a3/34519d16e5ebe69bad30c5526deea2c3912634ced7f9b5e6e0bb9dbbd567/pandas_profiling-3.0.0-py2.py3-none-any.whl (248kB)
+
      |████████████████████████████████| 256kB 6.8MB/s 
+
 Collecting PyYAML&gt;=5.0.0
+
   Downloading https://files.pythonhosted.org/packages/7a/a5/393c087efdc78091afa2af9f1378762f9821c9c1d7a22c5753fb5ac5f97a/PyYAML-5.4.1-cp37-cp37m-manylinux1_x86_64.whl (636kB)
+
      |████████████████████████████████| 645kB 9.4MB/s 
+
 Collecting requests&gt;=2.24.0
+
   Downloading https://files.pythonhosted.org/packages/29/c1/24814557f1d22c56d50280771a17307e6bf87b70727d975fd6b2ce6b014a/requests-2.25.1-py2.py3-none-any.whl (61kB)
+
      |████████████████████████████████| 61kB 6.1MB/s 
+
 Requirement already satisfied, skipping upgrade: seaborn&gt;=0.10.1 in /usr/local/lib/python3.7/dist-packages (from pandas-profiling[notebook]) (0.11.1)
+
 Requirement already satisfied, skipping upgrade: pandas!=1.0.0,!=1.0.1,!=1.0.2,!=1.1.0,&gt;=0.25.3 in /usr/local/lib/python3.7/dist-packages (from pandas-profiling[notebook]) (1.1.5)
+
 Collecting htmlmin&gt;=0.1.12
+
   Downloading https://files.pythonhosted.org/packages/b3/e7/fcd59e12169de19f0131ff2812077f964c6b960e7c09804d30a7bf2ab461/htmlmin-0.1.12.tar.gz
+
 Requirement already satisfied, skipping upgrade: jinja2&gt;=2.11.1 in /usr/local/lib/python3.7/dist-packages (from pandas-profiling[notebook]) (2.11.3)
+
 Requirement already satisfied, skipping upgrade: numpy&gt;=1.16.0 in /usr/local/lib/python3.7/dist-packages (from pandas-profiling[notebook]) (1.19.5)
+
 Requirement already satisfied, skipping upgrade: scipy&gt;=1.4.1 in /usr/local/lib/python3.7/dist-packages (from pandas-profiling[notebook]) (1.4.1)
+
 Requirement already satisfied, skipping upgrade: missingno&gt;=0.4.2 in /usr/local/lib/python3.7/dist-packages (from pandas-profiling[notebook]) (0.4.2)
+
 Requirement already satisfied, skipping upgrade: tqdm&gt;=4.48.2 in /usr/local/lib/python3.7/dist-packages (from pandas-profiling[notebook]) (4.60.0)
+
 Collecting phik&gt;=0.11.1
+
   Downloading https://files.pythonhosted.org/packages/b7/ce/193e8ddf62d4be643b9b4b20e8e9c63b2f6a20f92778c0410c629f89bdaa/phik-0.11.2.tar.gz (1.1MB)
+
      |████████████████████████████████| 1.1MB 16.3MB/s 
+
 Requirement already satisfied, skipping upgrade: joblib in /usr/local/lib/python3.7/dist-packages (from pandas-profiling[notebook]) (1.0.1)
+
 Collecting tangled-up-in-unicode==0.1.0
+
   Downloading https://files.pythonhosted.org/packages/93/3e/cb354fb2097fcf2fd5b5a342b10ae2a6e9363ba435b64e3e00c414064bc7/tangled_up_in_unicode-0.1.0-py3-none-any.whl (3.1MB)
+
      |████████████████████████████████| 3.1MB 29.5MB/s 
+
 Collecting pydantic&gt;=1.8.1
+
   Downloading https://files.pythonhosted.org/packages/9f/f2/2d5425efe57f6c4e06cbe5e587c1fd16929dcf0eb90bd4d3d1e1c97d1151/pydantic-1.8.2-cp37-cp37m-manylinux2014_x86_64.whl (10.1MB)
+
      |████████████████████████████████| 10.1MB 32.7MB/s 
+
 Collecting visions[type_image_path]==0.7.1
+
   Downloading https://files.pythonhosted.org/packages/80/96/01e4ba22cef96ae5035dbcf0451c2f4f859f8f17393b98406b23f0034279/visions-0.7.1-py3-none-any.whl (102kB)
+
      |████████████████████████████████| 112kB 40.0MB/s 
+
 Requirement already satisfied, skipping upgrade: matplotlib&gt;=3.2.0 in /usr/local/lib/python3.7/dist-packages (from pandas-profiling[notebook]) (3.2.2)
+
 Requirement already satisfied, skipping upgrade: ipywidgets&gt;=7.5.1; extra == "notebook" in /usr/local/lib/python3.7/dist-packages (from pandas-profiling[notebook]) (7.6.3)
+
 Requirement already satisfied, skipping upgrade: jupyter-core&gt;=4.6.3; extra == "notebook" in /usr/local/lib/python3.7/dist-packages (from pandas-profiling[notebook]) (4.7.1)
+
 Collecting jupyter-client&gt;=6.0.0; extra == "notebook"
+
   Downloading https://files.pythonhosted.org/packages/77/e8/c3cf72a32a697256608d5fa96360c431adec6e1c6709ba7f13f99ff5ee04/jupyter_client-6.1.12-py3-none-any.whl (112kB)
+
      |████████████████████████████████| 122kB 38.3MB/s 
+
 Requirement already satisfied, skipping upgrade: chardet&lt;5,&gt;=3.0.2 in /usr/local/lib/python3.7/dist-packages (from requests&gt;=2.24.0-&gt;pandas-profiling[notebook]) (3.0.4)
+
 Requirement already satisfied, skipping upgrade: idna&lt;3,&gt;=2.5 in /usr/local/lib/python3.7/dist-packages (from requests&gt;=2.24.0-&gt;pandas-profiling[notebook]) (2.10)
+
 Requirement already satisfied, skipping upgrade: certifi&gt;=2017.4.17 in /usr/local/lib/python3.7/dist-packages (from requests&gt;=2.24.0-&gt;pandas-profiling[notebook]) (2020.12.5)
+
 Requirement already satisfied, skipping upgrade: urllib3&lt;1.27,&gt;=1.21.1 in /usr/local/lib/python3.7/dist-packages (from requests&gt;=2.24.0-&gt;pandas-profiling[notebook]) (1.24.3)
+
 Requirement already satisfied, skipping upgrade: pytz&gt;=2017.2 in /usr/local/lib/python3.7/dist-packages (from pandas!=1.0.0,!=1.0.1,!=1.0.2,!=1.1.0,&gt;=0.25.3-&gt;pandas-profiling[notebook]) (2018.9)
+
 Requirement already satisfied, skipping upgrade: python-dateutil&gt;=2.7.3 in /usr/local/lib/python3.7/dist-packages (from pandas!=1.0.0,!=1.0.1,!=1.0.2,!=1.1.0,&gt;=0.25.3-&gt;pandas-profiling[notebook]) (2.8.1)
+
 Requirement already satisfied, skipping upgrade: MarkupSafe&gt;=0.23 in /usr/local/lib/python3.7/dist-packages (from jinja2&gt;=2.11.1-&gt;pandas-profiling[notebook]) (2.0.0)
+
 Requirement already satisfied, skipping upgrade: typing-extensions&gt;=3.7.4.3 in /usr/local/lib/python3.7/dist-packages (from pydantic&gt;=1.8.1-&gt;pandas-profiling[notebook]) (3.7.4.3)
+
 Requirement already satisfied, skipping upgrade: networkx&gt;=2.4 in /usr/local/lib/python3.7/dist-packages (from visions[type_image_path]==0.7.1-&gt;pandas-profiling[notebook]) (2.5.1)
+
 Requirement already satisfied, skipping upgrade: bottleneck in /usr/local/lib/python3.7/dist-packages (from visions[type_image_path]==0.7.1-&gt;pandas-profiling[notebook]) (1.3.2)
+
 Collecting multimethod==1.4
+
   Downloading https://files.pythonhosted.org/packages/7a/d0/ce5ad0392aa12645b7ad91a5983d6b625b704b021d9cd48c587630c1a9ac/multimethod-1.4-py2.py3-none-any.whl
+
 Requirement already satisfied, skipping upgrade: attrs&gt;=19.3.0 in /usr/local/lib/python3.7/dist-packages (from visions[type_image_path]==0.7.1-&gt;pandas-profiling[notebook]) (21.2.0)
+
 Requirement already satisfied, skipping upgrade: Pillow; extra == "type_image_path" in /usr/local/lib/python3.7/dist-packages (from visions[type_image_path]==0.7.1-&gt;pandas-profiling[notebook]) (7.1.2)
+
 Collecting imagehash; extra == "type_image_path"
+
   Downloading https://files.pythonhosted.org/packages/8e/18/9dbb772b5ef73a3069c66bb5bf29b9fb4dd57af0d5790c781c3f559bcca6/ImageHash-4.2.0-py2.py3-none-any.whl (295kB)
+
      |████████████████████████████████| 296kB 34.7MB/s 
+
 Requirement already satisfied, skipping upgrade: pyparsing!=2.0.4,!=2.1.2,!=2.1.6,&gt;=2.0.1 in /usr/local/lib/python3.7/dist-packages (from matplotlib&gt;=3.2.0-&gt;pandas-profiling[notebook]) (2.4.7)
+
 Requirement already satisfied, skipping upgrade: kiwisolver&gt;=1.0.1 in /usr/local/lib/python3.7/dist-packages (from matplotlib&gt;=3.2.0-&gt;pandas-profiling[notebook]) (1.3.1)
+
 Requirement already satisfied, skipping upgrade: cycler&gt;=0.10 in /usr/local/lib/python3.7/dist-packages (from matplotlib&gt;=3.2.0-&gt;pandas-profiling[notebook]) (0.10.0)
+
 Requirement already satisfied, skipping upgrade: jupyterlab-widgets&gt;=1.0.0; python_version &gt;= "3.6" in /usr/local/lib/python3.7/dist-packages (from ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (1.0.0)
+
 Requirement already satisfied, skipping upgrade: nbformat&gt;=4.2.0 in /usr/local/lib/python3.7/dist-packages (from ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (5.1.3)
+
 Requirement already satisfied, skipping upgrade: traitlets&gt;=4.3.1 in /usr/local/lib/python3.7/dist-packages (from ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (5.0.5)
+
 Requirement already satisfied, skipping upgrade: widgetsnbextension~=3.5.0 in /usr/local/lib/python3.7/dist-packages (from ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (3.5.1)
+
 Requirement already satisfied, skipping upgrade: ipython&gt;=4.0.0; python_version &gt;= "3.3" in /usr/local/lib/python3.7/dist-packages (from ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (5.5.0)
+
 Requirement already satisfied, skipping upgrade: ipykernel&gt;=4.5.1 in /usr/local/lib/python3.7/dist-packages (from ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (4.10.1)
+
 Requirement already satisfied, skipping upgrade: pyzmq&gt;=13 in /usr/local/lib/python3.7/dist-packages (from jupyter-client&gt;=6.0.0; extra == "notebook"-&gt;pandas-profiling[notebook]) (22.0.3)
+
 Requirement already satisfied, skipping upgrade: tornado&gt;=4.1 in /usr/local/lib/python3.7/dist-packages (from jupyter-client&gt;=6.0.0; extra == "notebook"-&gt;pandas-profiling[notebook]) (5.1.1)
+
 Requirement already satisfied, skipping upgrade: six&gt;=1.5 in /usr/local/lib/python3.7/dist-packages (from python-dateutil&gt;=2.7.3-&gt;pandas!=1.0.0,!=1.0.1,!=1.0.2,!=1.1.0,&gt;=0.25.3-&gt;pandas-profiling[notebook]) (1.15.0)
+
 Requirement already satisfied, skipping upgrade: decorator&lt;5,&gt;=4.3 in /usr/local/lib/python3.7/dist-packages (from networkx&gt;=2.4-&gt;visions[type_image_path]==0.7.1-&gt;pandas-profiling[notebook]) (4.4.2)
+
 Requirement already satisfied, skipping upgrade: PyWavelets in /usr/local/lib/python3.7/dist-packages (from imagehash; extra == "type_image_path"-&gt;visions[type_image_path]==0.7.1-&gt;pandas-profiling[notebook]) (1.1.1)
+
 Requirement already satisfied, skipping upgrade: ipython-genutils in /usr/local/lib/python3.7/dist-packages (from nbformat&gt;=4.2.0-&gt;ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (0.2.0)
+
 Requirement already satisfied, skipping upgrade: jsonschema!=2.5.0,&gt;=2.4 in /usr/local/lib/python3.7/dist-packages (from nbformat&gt;=4.2.0-&gt;ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (2.6.0)
+
 Requirement already satisfied, skipping upgrade: notebook&gt;=4.4.1 in /usr/local/lib/python3.7/dist-packages (from widgetsnbextension~=3.5.0-&gt;ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (5.3.1)
+
 Requirement already satisfied, skipping upgrade: pickleshare in /usr/local/lib/python3.7/dist-packages (from ipython&gt;=4.0.0; python_version &gt;= "3.3"-&gt;ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (0.7.5)
+
 Requirement already satisfied, skipping upgrade: pygments in /usr/local/lib/python3.7/dist-packages (from ipython&gt;=4.0.0; python_version &gt;= "3.3"-&gt;ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (2.6.1)
+
 Requirement already satisfied, skipping upgrade: simplegeneric&gt;0.8 in /usr/local/lib/python3.7/dist-packages (from ipython&gt;=4.0.0; python_version &gt;= "3.3"-&gt;ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (0.8.1)
+
 Requirement already satisfied, skipping upgrade: pexpect; sys_platform != "win32" in /usr/local/lib/python3.7/dist-packages (from ipython&gt;=4.0.0; python_version &gt;= "3.3"-&gt;ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (4.8.0)
+
 Requirement already satisfied, skipping upgrade: prompt-toolkit&lt;2.0.0,&gt;=1.0.4 in /usr/local/lib/python3.7/dist-packages (from ipython&gt;=4.0.0; python_version &gt;= "3.3"-&gt;ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (1.0.18)
+
 Requirement already satisfied, skipping upgrade: setuptools&gt;=18.5 in /usr/local/lib/python3.7/dist-packages (from ipython&gt;=4.0.0; python_version &gt;= "3.3"-&gt;ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (56.1.0)
+
 Requirement already satisfied, skipping upgrade: Send2Trash in /usr/local/lib/python3.7/dist-packages (from notebook&gt;=4.4.1-&gt;widgetsnbextension~=3.5.0-&gt;ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (1.5.0)
+
 Requirement already satisfied, skipping upgrade: nbconvert in /usr/local/lib/python3.7/dist-packages (from notebook&gt;=4.4.1-&gt;widgetsnbextension~=3.5.0-&gt;ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (5.6.1)
+
 Requirement already satisfied, skipping upgrade: terminado&gt;=0.8.1 in /usr/local/lib/python3.7/dist-packages (from notebook&gt;=4.4.1-&gt;widgetsnbextension~=3.5.0-&gt;ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (0.9.5)
+
 Requirement already satisfied, skipping upgrade: ptyprocess&gt;=0.5 in /usr/local/lib/python3.7/dist-packages (from pexpect; sys_platform != "win32"-&gt;ipython&gt;=4.0.0; python_version &gt;= "3.3"-&gt;ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (0.7.0)
+
 Requirement already satisfied, skipping upgrade: wcwidth in /usr/local/lib/python3.7/dist-packages (from prompt-toolkit&lt;2.0.0,&gt;=1.0.4-&gt;ipython&gt;=4.0.0; python_version &gt;= "3.3"-&gt;ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (0.2.5)
+
 Requirement already satisfied, skipping upgrade: bleach in /usr/local/lib/python3.7/dist-packages (from nbconvert-&gt;notebook&gt;=4.4.1-&gt;widgetsnbextension~=3.5.0-&gt;ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (3.3.0)
+
 Requirement already satisfied, skipping upgrade: defusedxml in /usr/local/lib/python3.7/dist-packages (from nbconvert-&gt;notebook&gt;=4.4.1-&gt;widgetsnbextension~=3.5.0-&gt;ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (0.7.1)
+
 Requirement already satisfied, skipping upgrade: testpath in /usr/local/lib/python3.7/dist-packages (from nbconvert-&gt;notebook&gt;=4.4.1-&gt;widgetsnbextension~=3.5.0-&gt;ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (0.4.4)
+
 Requirement already satisfied, skipping upgrade: mistune&lt;2,&gt;=0.8.1 in /usr/local/lib/python3.7/dist-packages (from nbconvert-&gt;notebook&gt;=4.4.1-&gt;widgetsnbextension~=3.5.0-&gt;ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (0.8.4)
+
 Requirement already satisfied, skipping upgrade: pandocfilters&gt;=1.4.1 in /usr/local/lib/python3.7/dist-packages (from nbconvert-&gt;notebook&gt;=4.4.1-&gt;widgetsnbextension~=3.5.0-&gt;ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (1.4.3)
+
 Requirement already satisfied, skipping upgrade: entrypoints&gt;=0.2.2 in /usr/local/lib/python3.7/dist-packages (from nbconvert-&gt;notebook&gt;=4.4.1-&gt;widgetsnbextension~=3.5.0-&gt;ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (0.3)
+
 Requirement already satisfied, skipping upgrade: packaging in /usr/local/lib/python3.7/dist-packages (from bleach-&gt;nbconvert-&gt;notebook&gt;=4.4.1-&gt;widgetsnbextension~=3.5.0-&gt;ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (20.9)
+
 Requirement already satisfied, skipping upgrade: webencodings in /usr/local/lib/python3.7/dist-packages (from bleach-&gt;nbconvert-&gt;notebook&gt;=4.4.1-&gt;widgetsnbextension~=3.5.0-&gt;ipywidgets&gt;=7.5.1; extra == "notebook"-&gt;pandas-profiling[notebook]) (0.5.1)
+
 Building wheels for collected packages: htmlmin, phik
+
   Building wheel for htmlmin (setup.py) ... done
+
   Created wheel for htmlmin: filename=htmlmin-0.1.12-cp37-none-any.whl size=27085 sha256=2889c06fcf32178bcfcd894aa597f8a6f0651e0e53d1d8a3051fb1deba3f03b4
+
   Stored in directory: /root/.cache/pip/wheels/43/07/ac/7c5a9d708d65247ac1f94066cf1db075540b85716c30255459
+
   Building wheel for phik (setup.py) ... done
+
   Created wheel for phik: filename=phik-0.11.2-cp37-none-any.whl size=1107413 sha256=a2c7b4e43b5c0b9fe7c51601923c17c3f39f88ec55bb08e7490cf4a73bd8fdd5
+
   Stored in directory: /root/.cache/pip/wheels/c0/a3/b0/f27b1cfe32ea131a3715169132ff6d85653789e80e966c3bf6
+
 Successfully built htmlmin phik
-ERROR: google-colab 1.0.0 has requirement requests~=2.23.0, but you'll have requests 2.25.1 which is incompatible.
-ERROR: datascience 0.10.6 has requirement folium==0.2.1, but you'll have folium 0.8.3 which is incompatible.
-ERROR: phik 0.11.2 has requirement scipy&gt;=1.5.2, but you'll have scipy 1.4.1 which is incompatible.
+
+<span class="ansi-red-fg">ERROR: google-colab 1.0.0 has requirement requests~=2.23.0, but you'll have requests 2.25.1 which is incompatible.</span>
+
+<span class="ansi-red-fg">ERROR: datascience 0.10.6 has requirement folium==0.2.1, but you'll have folium 0.8.3 which is incompatible.</span>
+
+<span class="ansi-red-fg">ERROR: phik 0.11.2 has requirement scipy&gt;=1.5.2, but you'll have scipy 1.4.1 which is incompatible.</span>
+
 Installing collected packages: PyYAML, requests, htmlmin, phik, tangled-up-in-unicode, pydantic, multimethod, imagehash, visions, jupyter-client, pandas-profiling
+
   Found existing installation: PyYAML 3.13
+
     Uninstalling PyYAML-3.13:
+
       Successfully uninstalled PyYAML-3.13
+
   Found existing installation: requests 2.23.0
+
     Uninstalling requests-2.23.0:
+
       Successfully uninstalled requests-2.23.0
+
   Found existing installation: jupyter-client 5.3.5
+
     Uninstalling jupyter-client-5.3.5:
+
       Successfully uninstalled jupyter-client-5.3.5
+
   Found existing installation: pandas-profiling 1.4.1
+
     Uninstalling pandas-profiling-1.4.1:
+
       Successfully uninstalled pandas-profiling-1.4.1
+
 Successfully installed PyYAML-5.4.1 htmlmin-0.1.12 imagehash-4.2.0 jupyter-client-6.1.12 multimethod-1.4 pandas-profiling-3.0.0 phik-0.11.2 pydantic-1.8.2 requests-2.25.1 tangled-up-in-unicode-0.1.0 visions-0.7.1
+
 Enabling notebook extension jupyter-js-widgets/extension...
-      - Validating: OK</code></pre>
+
+      - Validating: <span class="ansi-green-fg">OK</span>
+</pre>
+</div>
 </div>
 </div>
 </section>
@@ -439,28 +560,28 @@ Enabling notebook extension jupyter-js-widgets/extension...
 <p>For further guidance read this wonderful article by Mrinali Gupta: <a href="https://medium.com/analytics-vidhya/how-to-fetch-kaggle-datasets-into-google-colab-ea682569851a">How to fetch Kaggle Datasets into Google Colab</a></p>
 <p>So let’s get to it!</p>
 <p>First, we need to mount our google drive so that we can access all the folders in the drive.</p>
-<div id="cell-10" class="cell" data-outputid="57a3124b-755e-4b3f-e2a0-dc060f90ecb7" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> google.colab <span class="im">import</span> drive</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>drive.mount(<span class="st">'/content/gdrive'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-10" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="57a3124b-755e-4b3f-e2a0-dc060f90ecb7" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> google.colab <span class="im">import</span> drive</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>drive.mount(<span class="st">'/content/gdrive'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Mounted at /content/gdrive</code></pre>
 </div>
 </div>
 <p>Then we will using the following code to provide a config path for the Kaggle Json API</p>
 <div id="cell-12" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>os.environ[<span class="st">'KAGGLE_CONFIG_DIR'</span>] <span class="op">=</span> <span class="st">"/content/gdrive/My Drive/kaggle/Insurance"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>os.environ[<span class="st">'KAGGLE_CONFIG_DIR'</span>] <span class="op">=</span> <span class="st">"/content/gdrive/My Drive/kaggle/Insurance"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We will change our current directory to where we want the dataset to be downloaded</p>
-<div id="cell-14" class="cell" data-outputid="d2fbf0dc-5575-4630-d1e6-ba183793921d" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>cd <span class="op">/</span>content<span class="op">/</span>gdrive<span class="op">/</span>My Drive<span class="op">/</span>kaggle<span class="op">/</span>Insurance</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-14" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="d2fbf0dc-5575-4630-d1e6-ba183793921d" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>cd <span class="op">/</span>content<span class="op">/</span>gdrive<span class="op">/</span>My Drive<span class="op">/</span>kaggle<span class="op">/</span>Insurance</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>/content/gdrive/My Drive/kaggle/Insurance</code></pre>
 </div>
 </div>
 <p>Now we can download the dataset from kaggle</p>
-<div id="cell-16" class="cell" data-outputid="3b3f7bb9-a3e1-414e-d424-39ab1ff5e968">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>kaggle datasets download <span class="op">-</span>d giripujar<span class="op">/</span>hr<span class="op">-</span>analytics</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-16" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="3b3f7bb9-a3e1-414e-d424-39ab1ff5e968">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>kaggle datasets download <span class="op">-</span>d giripujar<span class="op">/</span>hr<span class="op">-</span>analytics</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Downloading hr-analytics.zip to /content/gdrive/My Drive/kaggle/Insurance
   0% 0.00/111k [00:00&lt;?, ?B/s]
@@ -468,16 +589,16 @@ Enabling notebook extension jupyter-js-widgets/extension...
 </div>
 </div>
 <p>Let’s unzip the files</p>
-<div id="cell-18" class="cell" data-outputid="83c33121-eca6-45cc-fdce-7cf2e99110cf">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>unzip \<span class="op">*</span>.<span class="bu">zip</span>  <span class="op">&amp;&amp;</span> rm <span class="op">*</span>.<span class="bu">zip</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-18" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="83c33121-eca6-45cc-fdce-7cf2e99110cf">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>unzip \<span class="op">*</span>.<span class="bu">zip</span>  <span class="op">&amp;&amp;</span> rm <span class="op">*</span>.<span class="bu">zip</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Archive:  hr-analytics.zip
   inflating: HR_comma_sep.csv        </code></pre>
 </div>
 </div>
 <p>What files are present in the current directory?</p>
-<div id="cell-20" class="cell" data-outputid="a698e26f-7c44-4fb9-cec2-e3d98aae2c04" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>ls</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-20" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="a698e26f-7c44-4fb9-cec2-e3d98aae2c04" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>ls</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>AutoViz_Plots  HR_comma_sep.csv  kaggle.json</code></pre>
 </div>
@@ -488,16 +609,15 @@ Enabling notebook extension jupyter-js-widgets/extension...
 <section id="auto-eda" class="level2">
 <h2 class="anchored" data-anchor-id="auto-eda">Auto-EDA</h2>
 <p>What does our data look like?</p>
-<div id="cell-24" class="cell" data-outputid="4d757091-5cdb-43bc-bd0e-64d560149a78" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>pd.read_csv(<span class="st">'HR_comma_sep.csv'</span>)</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>df.head(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-24" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:195}}" data-outputid="4d757091-5cdb-43bc-bd0e-64d560149a78" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>pd.read_csv(<span class="st">'HR_comma_sep.csv'</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>df.head(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="7">
 <div>
-<div>
 
 
-<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -585,17 +705,16 @@ Enabling notebook extension jupyter-js-widgets/extension...
 </div>
 </div>
 </div>
-</div>
 <p>From above, we can see that we have a tabular dataset with 10 columns and a target feature (‘left’). We have 4 categorical features (‘Department’,‘salary’,‘Work_accident’,‘promotion_last_5years’) apart from the target and 5 numerical features.</p>
 <p>The goal of EDA is to gain insights which are not apparent just by looking at the data. To do this, we use different kinds of visualizations and statistical techniques which transform our data into information that we can interpret and analyze. With these insights, we can decide what to do with our data, how to process it, how to model it and how to present it in an understanble form.</p>
 <p>In this practical example, we are going to use our Auto-EDA tools and note down the insights gained about the data using each one. This well help us in examining their utility and limitations.</p>
 <section id="sweetviz" class="level3">
 <h3 class="anchored" data-anchor-id="sweetviz">SweetViz</h3>
 <p>SweetViz allows us to create a report which contains a detailed analysis of the data in each column along with information about the associations between the features. Let’s use SweetViz to create a report and see what insights we can gather from it.</p>
-<div id="cell-28" class="cell" data-outputid="85c452dd-6431-4878-c92c-5e0617a8206a">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sweetviz <span class="im">as</span> sv</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>my_report <span class="op">=</span> sv.analyze(df,target_feat<span class="op">=</span><span class="st">'left'</span>)</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>my_report.show_notebook(w<span class="op">=</span><span class="st">'100%'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-28" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:803,&quot;referenced_widgets&quot;:[&quot;9e5b5645123b4877a580972c4031c824&quot;,&quot;1fcfe8a20b4346108abbea349e613bca&quot;,&quot;4d4acea4d5614f158524f424cc0816cc&quot;,&quot;da14ee8e81ba4652b77dbf24cf79ef03&quot;,&quot;9fe0c431599d45ebab5cd0be277d9d29&quot;,&quot;f977ff52598b47d69ac8c266c5a0afa0&quot;,&quot;93dca565b88f41e884d957d3843d21a0&quot;,&quot;3950f3c77e4b4e629b9a2fd03fa1b03a&quot;,&quot;020e4b205f7043e6b6e3752d637f8a1c&quot;,&quot;af4ad86d79f547c980b1b384f2ca5bfe&quot;,&quot;096b8aa4ff5243bdbe3b25e16e4d5c51&quot;]}}" data-outputid="85c452dd-6431-4878-c92c-5e0617a8206a">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sweetviz <span class="im">as</span> sv</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>my_report <span class="op">=</span> sv.analyze(df,target_feat<span class="op">=</span><span class="st">'left'</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>my_report.show_notebook(w<span class="op">=</span><span class="st">'100%'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id":"9e5b5645123b4877a580972c4031c824","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
@@ -4811,10 +4930,10 @@ button
 <h3 class="anchored" data-anchor-id="pandas-profiling">Pandas profiling</h3>
 <p>Pandas profiling is an extension of the describe function in pandas. This library allows us to conduct some quick data analysis on a pandas dataframe. It is very useful for an initial investigation into the mysteries of our dataset.</p>
 <p>Let’s see what we can do with it.</p>
-<div id="cell-32" class="cell" data-outputid="83db8b87-a5cc-4efd-910c-81cc18fe889d" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pandas_profiling <span class="im">import</span> ProfileReport</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>ireport <span class="op">=</span> ProfileReport(df,explorative<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>ireport.to_notebook_iframe()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-32" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:917,&quot;referenced_widgets&quot;:[&quot;764bd9a130854a82b81b8fed7ba1da6e&quot;,&quot;c295ddcae8c04ccb924ea6e420e2aaf9&quot;,&quot;7a0c9935ab5c4737973e5294e48183b0&quot;,&quot;4d30aa77199741cf9e299e6547fe972a&quot;,&quot;f780df6977514b91a79c82e1cccc36e0&quot;,&quot;b6d071c85f874017aaa7c300dc6521b9&quot;,&quot;52f50cd7349f47a0bf5c035408ec9565&quot;,&quot;59348dae6d2441f0bb6f64ef11792340&quot;,&quot;c1c09476a4144ed49fc75dceac521d09&quot;,&quot;84d145b052774b39a85ab0763268cf79&quot;,&quot;850a90c4768f43909c6a925a1f3fa5fb&quot;,&quot;4d6bfe683af848ebbbb70395328adf68&quot;,&quot;d60582acd53b49e7b56b2fd9e5bdf5dc&quot;,&quot;c7e2de015ecf4df0aa39f36e1212cc72&quot;,&quot;56e99e71e6d641faaf7a77613147715c&quot;,&quot;4aaa8fbe29cf432089aedf404b3e003f&quot;,&quot;dd14e6f0bab540b686114bb6026df4db&quot;,&quot;705c3e4675694bbca4de3f9c15a5fbf0&quot;,&quot;5a9a645053d14584be78ccde4105d794&quot;,&quot;43f6f695157a4e2b82aea863a0102bac&quot;,&quot;49b60d23d74749f3a5c5aef4f720bd08&quot;,&quot;0fd8f477b87d4a2c86010ec5213cc57a&quot;,&quot;9d282d9eeac948ffb642615f8eb40c73&quot;,&quot;acee231557984a05a43b6de5ef89df7c&quot;,&quot;fd4751cea500455989efa6503e96b547&quot;,&quot;f7d717170f2a4a2aac5d64328c50dff1&quot;,&quot;edbe3bf8ee3c4c4c8935e2c284224039&quot;,&quot;584dc4ec847c4e78a3829323e86a7918&quot;,&quot;f5e19a9a38174296845953e1665888f2&quot;,&quot;68c89f0634974454aee659733f798b73&quot;,&quot;3e652c7d95304d49a18526122043e47d&quot;,&quot;5f1b4799355f4f2cabd81be4ba27d53f&quot;,&quot;d0f1b806599c4dc2a1b8ab7810480785&quot;]}}" data-outputid="83db8b87-a5cc-4efd-910c-81cc18fe889d" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pandas_profiling <span class="im">import</span> ProfileReport</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>ireport <span class="op">=</span> ProfileReport(df,explorative<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>ireport.to_notebook_iframe()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id":"764bd9a130854a82b81b8fed7ba1da6e","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
@@ -31206,16 +31325,16 @@ $(&quot;a[href^='#'].anchor&quot;).on('click', function (e) {
 <p>In his book “Good Charts,” Scott Berinato exclaims: “ A good visualization can communicate the nature and potential impact of information and ideas more powerfully than any other form of communication.”</p>
 <p>AutoViz gives us a lot of different visualizations that can be useful in understanding and communicating the story behind our data. This can be tremendously useful when your audience comprises of people from a non-technical background who don’t understand numbers but like pictures.</p>
 <p>Let’s use some Autoviz.</p>
-<div id="cell-36" class="cell" data-outputid="0cb86f29-571d-46b6-df72-148f56298193" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> autoviz.AutoViz_Class <span class="im">import</span> AutoViz_Class</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>AV <span class="op">=</span> AutoViz_Class()</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>sep <span class="op">=</span> <span class="st">','</span></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>dft <span class="op">=</span> AV.AutoViz(filename<span class="op">=</span><span class="st">""</span>,</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>                 sep<span class="op">=</span>sep,</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>                 depVar<span class="op">=</span><span class="st">'left'</span>,</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>                 dfte<span class="op">=</span>df, header<span class="op">=</span><span class="dv">0</span>, verbose<span class="op">=</span><span class="dv">1</span>, </span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>                 lowess<span class="op">=</span><span class="va">True</span>, chart_format<span class="op">=</span><span class="st">'jpg'</span>,</span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>                 max_rows_analyzed<span class="op">=</span><span class="dv">150000</span>, max_cols_analyzed<span class="op">=</span><span class="dv">30</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-36" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:1000}}" data-outputid="0cb86f29-571d-46b6-df72-148f56298193" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> autoviz.AutoViz_Class <span class="im">import</span> AutoViz_Class</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>AV <span class="op">=</span> AutoViz_Class()</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>sep <span class="op">=</span> <span class="st">','</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>dft <span class="op">=</span> AV.AutoViz(filename<span class="op">=</span><span class="st">""</span>,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>                 sep<span class="op">=</span>sep,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>                 depVar<span class="op">=</span><span class="st">'left'</span>,</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>                 dfte<span class="op">=</span>df, header<span class="op">=</span><span class="dv">0</span>, verbose<span class="op">=</span><span class="dv">1</span>, </span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>                 lowess<span class="op">=</span><span class="va">True</span>, chart_format<span class="op">=</span><span class="st">'jpg'</span>,</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>                 max_rows_analyzed<span class="op">=</span><span class="dv">150000</span>, max_cols_analyzed<span class="op">=</span><span class="dv">30</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Shape of your Data Set: (14999, 10)
 ############## C L A S S I F Y I N G  V A R I A B L E S  ####################
@@ -31265,11 +31384,7 @@ Data Set columns info:
    ID variables %s 
 '   []'
    Target variable %s 
-'   left'
-Total Number of Scatter Plots = 3
-Time to run AutoViz (in seconds) = 22.712
-
- ###################### VISUALIZATION Completed ########################</code></pre>
+'   left'</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div>
@@ -31278,12 +31393,8 @@ Time to run AutoViz (in seconds) = 22.712
 </figure>
 </div>
 </div>
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="2021-05-24-autoeda_files/figure-html/cell-13-output-3.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Total Number of Scatter Plots = 3</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div>
@@ -31327,6 +31438,18 @@ Time to run AutoViz (in seconds) = 22.712
 </figure>
 </div>
 </div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="2021-05-24-autoeda_files/figure-html/cell-13-output-10.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Time to run AutoViz (in seconds) = 22.712
+
+ ###################### VISUALIZATION Completed ########################</code></pre>
+</div>
 </div>
 <p><strong>Insights:</strong></p>
 <ul>
@@ -31355,228 +31478,242 @@ Time to run AutoViz (in seconds) = 22.712
 {"020e4b205f7043e6b6e3752d637f8a1c":{"model_module":"@jupyter-widgets/base","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"1.2.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border":null,"bottom":null,"display":null,"flex":"2","flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"overflow_x":null,"overflow_y":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"096b8aa4ff5243bdbe3b25e16e4d5c51":{"model_module":"@jupyter-widgets/base","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"1.2.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"overflow_x":null,"overflow_y":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"0fd8f477b87d4a2c86010ec5213cc57a":{"model_module":"@jupyter-widgets/base","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"1.2.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"overflow_x":null,"overflow_y":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"1fcfe8a20b4346108abbea349e613bca":{"model_module":"@jupyter-widgets/base","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"1.2.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border":null,"bottom":null,"display":"inline-flex","flex":null,"flex_flow":"row wrap","grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"overflow_x":null,"overflow_y":null,"padding":null,"right":null,"top":null,"visibility":null,"width":"100%"}},"3950f3c77e4b4e629b9a2fd03fa1b03a":{"model_module":"@jupyter-widgets/controls","model_name":"ProgressStyleModel","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"ProgressStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"StyleView","bar_color":null,"description_width":""}},"3e652c7d95304d49a18526122043e47d":{"model_module":"@jupyter-widgets/base","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"1.2.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"overflow_x":null,"overflow_y":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"43f6f695157a4e2b82aea863a0102bac":{"model_module":"@jupyter-widgets/base","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"1.2.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"overflow_x":null,"overflow_y":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"49b60d23d74749f3a5c5aef4f720bd08":{"model_module":"@jupyter-widgets/controls","model_name":"DescriptionStyleModel","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"DescriptionStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"StyleView","description_width":""}},"4aaa8fbe29cf432089aedf404b3e003f":{"model_module":"@jupyter-widgets/controls","model_name":"HTMLModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"HTMLModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"1.5.0","_view_name":"HTMLView","description":"","description_tooltip":null,"layout":"IPY_MODEL_0fd8f477b87d4a2c86010ec5213cc57a","placeholder":"​","style":"IPY_MODEL_49b60d23d74749f3a5c5aef4f720bd08","value":" 1/1 [00:07&lt;00:00,  7.25s/it]"}},"4d30aa77199741cf9e299e6547fe972a":{"model_module":"@jupyter-widgets/controls","model_name":"FloatProgressModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"FloatProgressModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"1.5.0","_view_name":"ProgressView","bar_style":"success","description":"","description_tooltip":null,"layout":"IPY_MODEL_c1c09476a4144ed49fc75dceac521d09","max":23,"min":0,"orientation":"horizontal","style":"IPY_MODEL_59348dae6d2441f0bb6f64ef11792340","value":23}},"4d4acea4d5614f158524f424cc0816cc":{"model_module":"@jupyter-widgets/controls","model_name":"HTMLModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"HTMLModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"1.5.0","_view_name":"HTMLView","description":"","description_tooltip":null,"layout":"IPY_MODEL_93dca565b88f41e884d957d3843d21a0","placeholder":"​","style":"IPY_MODEL_f977ff52598b47d69ac8c266c5a0afa0","value":"Done! Use &#x27;show&#x27; commands to display/save.   "}},"4d6bfe683af848ebbbb70395328adf68":{"model_module":"@jupyter-widgets/controls","model_name":"HBoxModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"HBoxModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"1.5.0","_view_name":"HBoxView","box_style":"","children":["IPY_MODEL_c7e2de015ecf4df0aa39f36e1212cc72","IPY_MODEL_56e99e71e6d641faaf7a77613147715c","IPY_MODEL_4aaa8fbe29cf432089aedf404b3e003f"],"layout":"IPY_MODEL_d60582acd53b49e7b56b2fd9e5bdf5dc"}},"52f50cd7349f47a0bf5c035408ec9565":{"model_module":"@jupyter-widgets/base","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"1.2.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"overflow_x":null,"overflow_y":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"56e99e71e6d641faaf7a77613147715c":{"model_module":"@jupyter-widgets/controls","model_name":"FloatProgressModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"FloatProgressModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"1.5.0","_view_name":"ProgressView","bar_style":"success","description":"","description_tooltip":null,"layout":"IPY_MODEL_43f6f695157a4e2b82aea863a0102bac","max":1,"min":0,"orientation":"horizontal","style":"IPY_MODEL_5a9a645053d14584be78ccde4105d794","value":1}},"584dc4ec847c4e78a3829323e86a7918":{"model_module":"@jupyter-widgets/controls","model_name":"DescriptionStyleModel","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"DescriptionStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"StyleView","description_width":""}},"59348dae6d2441f0bb6f64ef11792340":{"model_module":"@jupyter-widgets/controls","model_name":"ProgressStyleModel","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"ProgressStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"StyleView","bar_color":null,"description_width":""}},"5a9a645053d14584be78ccde4105d794":{"model_module":"@jupyter-widgets/controls","model_name":"ProgressStyleModel","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"ProgressStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"StyleView","bar_color":null,"description_width":""}},"5f1b4799355f4f2cabd81be4ba27d53f":{"model_module":"@jupyter-widgets/controls","model_name":"DescriptionStyleModel","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"DescriptionStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"StyleView","description_width":""}},"68c89f0634974454aee659733f798b73":{"model_module":"@jupyter-widgets/controls","model_name":"ProgressStyleModel","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"ProgressStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"StyleView","bar_color":null,"description_width":""}},"705c3e4675694bbca4de3f9c15a5fbf0":{"model_module":"@jupyter-widgets/base","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"1.2.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"overflow_x":null,"overflow_y":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"764bd9a130854a82b81b8fed7ba1da6e":{"model_module":"@jupyter-widgets/controls","model_name":"HBoxModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"HBoxModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"1.5.0","_view_name":"HBoxView","box_style":"","children":["IPY_MODEL_7a0c9935ab5c4737973e5294e48183b0","IPY_MODEL_4d30aa77199741cf9e299e6547fe972a","IPY_MODEL_f780df6977514b91a79c82e1cccc36e0"],"layout":"IPY_MODEL_c295ddcae8c04ccb924ea6e420e2aaf9"}},"7a0c9935ab5c4737973e5294e48183b0":{"model_module":"@jupyter-widgets/controls","model_name":"HTMLModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"HTMLModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"1.5.0","_view_name":"HTMLView","description":"","description_tooltip":null,"layout":"IPY_MODEL_52f50cd7349f47a0bf5c035408ec9565","placeholder":"​","style":"IPY_MODEL_b6d071c85f874017aaa7c300dc6521b9","value":"Summarize dataset: 100%"}},"84d145b052774b39a85ab0763268cf79":{"model_module":"@jupyter-widgets/controls","model_name":"DescriptionStyleModel","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"DescriptionStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"StyleView","description_width":""}},"850a90c4768f43909c6a925a1f3fa5fb":{"model_module":"@jupyter-widgets/base","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"1.2.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"overflow_x":null,"overflow_y":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"93dca565b88f41e884d957d3843d21a0":{"model_module":"@jupyter-widgets/base","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"1.2.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"overflow_x":null,"overflow_y":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"9d282d9eeac948ffb642615f8eb40c73":{"model_module":"@jupyter-widgets/controls","model_name":"HBoxModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"HBoxModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"1.5.0","_view_name":"HBoxView","box_style":"","children":["IPY_MODEL_fd4751cea500455989efa6503e96b547","IPY_MODEL_f7d717170f2a4a2aac5d64328c50dff1","IPY_MODEL_edbe3bf8ee3c4c4c8935e2c284224039"],"layout":"IPY_MODEL_acee231557984a05a43b6de5ef89df7c"}},"9e5b5645123b4877a580972c4031c824":{"model_module":"@jupyter-widgets/controls","model_name":"HBoxModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"HBoxModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"1.5.0","_view_name":"HBoxView","box_style":"","children":["IPY_MODEL_4d4acea4d5614f158524f424cc0816cc","IPY_MODEL_da14ee8e81ba4652b77dbf24cf79ef03","IPY_MODEL_9fe0c431599d45ebab5cd0be277d9d29"],"layout":"IPY_MODEL_1fcfe8a20b4346108abbea349e613bca"}},"9fe0c431599d45ebab5cd0be277d9d29":{"model_module":"@jupyter-widgets/controls","model_name":"HTMLModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"HTMLModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"1.5.0","_view_name":"HTMLView","description":"","description_tooltip":null,"layout":"IPY_MODEL_096b8aa4ff5243bdbe3b25e16e4d5c51","placeholder":"​","style":"IPY_MODEL_af4ad86d79f547c980b1b384f2ca5bfe","value":" [100%]   00:00 -&gt; (00:00 left)"}},"acee231557984a05a43b6de5ef89df7c":{"model_module":"@jupyter-widgets/base","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"1.2.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"overflow_x":null,"overflow_y":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"af4ad86d79f547c980b1b384f2ca5bfe":{"model_module":"@jupyter-widgets/controls","model_name":"DescriptionStyleModel","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"DescriptionStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"StyleView","description_width":""}},"b6d071c85f874017aaa7c300dc6521b9":{"model_module":"@jupyter-widgets/controls","model_name":"DescriptionStyleModel","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"DescriptionStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"StyleView","description_width":""}},"c1c09476a4144ed49fc75dceac521d09":{"model_module":"@jupyter-widgets/base","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"1.2.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"overflow_x":null,"overflow_y":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"c295ddcae8c04ccb924ea6e420e2aaf9":{"model_module":"@jupyter-widgets/base","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"1.2.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"overflow_x":null,"overflow_y":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"c7e2de015ecf4df0aa39f36e1212cc72":{"model_module":"@jupyter-widgets/controls","model_name":"HTMLModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"HTMLModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"1.5.0","_view_name":"HTMLView","description":"","description_tooltip":null,"layout":"IPY_MODEL_705c3e4675694bbca4de3f9c15a5fbf0","placeholder":"​","style":"IPY_MODEL_dd14e6f0bab540b686114bb6026df4db","value":"Generate report structure: 100%"}},"d0f1b806599c4dc2a1b8ab7810480785":{"model_module":"@jupyter-widgets/base","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"1.2.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"overflow_x":null,"overflow_y":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"d60582acd53b49e7b56b2fd9e5bdf5dc":{"model_module":"@jupyter-widgets/base","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"1.2.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"overflow_x":null,"overflow_y":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"da14ee8e81ba4652b77dbf24cf79ef03":{"model_module":"@jupyter-widgets/controls","model_name":"FloatProgressModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"FloatProgressModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"1.5.0","_view_name":"ProgressView","bar_style":"success","description":"","description_tooltip":null,"layout":"IPY_MODEL_020e4b205f7043e6b6e3752d637f8a1c","max":1,"min":0,"orientation":"horizontal","style":"IPY_MODEL_3950f3c77e4b4e629b9a2fd03fa1b03a","value":1}},"dd14e6f0bab540b686114bb6026df4db":{"model_module":"@jupyter-widgets/controls","model_name":"DescriptionStyleModel","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"DescriptionStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"StyleView","description_width":""}},"edbe3bf8ee3c4c4c8935e2c284224039":{"model_module":"@jupyter-widgets/controls","model_name":"HTMLModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"HTMLModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"1.5.0","_view_name":"HTMLView","description":"","description_tooltip":null,"layout":"IPY_MODEL_d0f1b806599c4dc2a1b8ab7810480785","placeholder":"​","style":"IPY_MODEL_5f1b4799355f4f2cabd81be4ba27d53f","value":" 1/1 [00:01&lt;00:00,  1.55s/it]"}},"f5e19a9a38174296845953e1665888f2":{"model_module":"@jupyter-widgets/base","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"1.2.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"overflow_x":null,"overflow_y":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"f780df6977514b91a79c82e1cccc36e0":{"model_module":"@jupyter-widgets/controls","model_name":"HTMLModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"HTMLModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"1.5.0","_view_name":"HTMLView","description":"","description_tooltip":null,"layout":"IPY_MODEL_850a90c4768f43909c6a925a1f3fa5fb","placeholder":"​","style":"IPY_MODEL_84d145b052774b39a85ab0763268cf79","value":" 23/23 [00:11&lt;00:00,  1.16s/it, Completed]"}},"f7d717170f2a4a2aac5d64328c50dff1":{"model_module":"@jupyter-widgets/controls","model_name":"FloatProgressModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"FloatProgressModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"1.5.0","_view_name":"ProgressView","bar_style":"success","description":"","description_tooltip":null,"layout":"IPY_MODEL_3e652c7d95304d49a18526122043e47d","max":1,"min":0,"orientation":"horizontal","style":"IPY_MODEL_68c89f0634974454aee659733f798b73","value":1}},"f977ff52598b47d69ac8c266c5a0afa0":{"model_module":"@jupyter-widgets/controls","model_name":"DescriptionStyleModel","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"DescriptionStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"1.2.0","_view_name":"StyleView","description_width":""}},"fd4751cea500455989efa6503e96b547":{"model_module":"@jupyter-widgets/controls","model_name":"HTMLModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"1.5.0","_model_name":"HTMLModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"1.5.0","_view_name":"HTMLView","description":"","description_tooltip":null,"layout":"IPY_MODEL_f5e19a9a38174296845953e1665888f2","placeholder":"​","style":"IPY_MODEL_584dc4ec847c4e78a3829323e86a7918","value":"Render HTML: 100%"}}}
 </script>
 <script id="quarto-html-after-body" type="application/javascript">
-window.document.addEventListener("DOMContentLoaded", function (event) {
-  const toggleBodyColorMode = (bsSheetEl) => {
-    const mode = bsSheetEl.getAttribute("data-mode");
-    const bodyEl = window.document.querySelector("body");
-    if (mode === "dark") {
-      bodyEl.classList.add("quarto-dark");
-      bodyEl.classList.remove("quarto-light");
-    } else {
-      bodyEl.classList.add("quarto-light");
-      bodyEl.classList.remove("quarto-dark");
-    }
-  }
-  const toggleBodyColorPrimary = () => {
-    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-    if (bsSheetEl) {
-      toggleBodyColorMode(bsSheetEl);
-    }
-  }
-  toggleBodyColorPrimary();  
-  const icon = "";
-  const anchorJS = new window.AnchorJS();
-  anchorJS.options = {
-    placement: 'right',
-    icon: icon
-  };
-  anchorJS.add('.anchored');
-  const isCodeAnnotation = (el) => {
-    for (const clz of el.classList) {
-      if (clz.startsWith('code-annotation-')) {                     
-        return true;
-      }
-    }
-    return false;
-  }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
-    // button target
-    const button = e.trigger;
-    // don't keep focus
-    button.blur();
-    // flash "checked"
-    button.classList.add('code-copy-button-checked');
-    var currentTitle = button.getAttribute("title");
-    button.setAttribute("title", "Copied!");
-    let tooltip;
-    if (window.bootstrap) {
-      button.setAttribute("data-bs-toggle", "tooltip");
-      button.setAttribute("data-bs-placement", "left");
-      button.setAttribute("data-bs-title", "Copied!");
-      tooltip = new bootstrap.Tooltip(button, 
-        { trigger: "manual", 
-          customClass: "code-copy-button-tooltip",
-          offset: [0, -8]});
-      tooltip.show();    
-    }
-    setTimeout(function() {
-      if (tooltip) {
-        tooltip.hide();
-        button.removeAttribute("data-bs-title");
-        button.removeAttribute("data-bs-toggle");
-        button.removeAttribute("data-bs-placement");
-      }
-      button.setAttribute("title", currentTitle);
-      button.classList.remove('code-copy-button-checked');
-    }, 1000);
-    // clear code selection
-    e.clearSelection();
-  });
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-    var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp("https:\/\/mehulfollytobevice\.github\.io\/my_blogs2\/");
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-    }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-        // undo the damage that might have been done by quarto-nav.js in the case of
-        // links that we want to consider external
-        if (link.dataset.originalHref !== undefined) {
-          link.href = link.dataset.originalHref;
-        }
-      }
-    }
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-    const config = {
-      allowHTML: true,
-      maxWidth: 500,
-      delay: 100,
-      arrow: false,
-      appendTo: function(el) {
-          return el.parentElement;
-      },
-      interactive: true,
-      interactiveBorder: 10,
-      theme: 'quarto',
-      placement: 'bottom-start',
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
     };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
-    window.tippy(el, config); 
-  }
-  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-  for (var i=0; i<noterefs.length; i++) {
-    const ref = noterefs[i];
-    tippyHover(ref, function() {
-      // use id or data attribute instead here
-      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-      try { href = new URL(href).hash; } catch {}
-      const id = href.replace(/^#\/?/, "");
-      const note = window.document.getElementById(id);
-      if (note) {
-        return note.innerHTML;
-      } else {
-        return "";
-      }
-    });
-  }
-  const xrefs = window.document.querySelectorAll('a.quarto-xref');
-  const processXRef = (id, note) => {
-    // Strip column container classes
-    const stripColumnClz = (el) => {
-      el.classList.remove("page-full", "page-columns");
-      if (el.children) {
-        for (const child of el.children) {
-          stripColumnClz(child);
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
         }
       }
+      return false;
     }
-    stripColumnClz(note)
-    if (id === null || id.startsWith('sec-')) {
-      // Special case sections, only their first couple elements
-      const container = document.createElement("div");
-      if (note.children && note.children.length > 2) {
-        container.appendChild(note.children[0].cloneNode(true));
-        for (let i = 1; i < note.children.length; i++) {
-          const child = note.children[i];
-          if (child.tagName === "P" && child.innerText === "") {
-            continue;
-          } else {
-            container.appendChild(child.cloneNode(true));
-            break;
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
           }
         }
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(container);
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/mehulfollytobevice\.github\.io\/my_blogs2\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
         }
-        return container.innerHTML
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
       } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
         if (window.Quarto?.typesetMath) {
           window.Quarto.typesetMath(note);
         }
-        return note.innerHTML;
-      }
-    } else {
-      // Remove any anchor links if they are present
-      const anchorLink = note.querySelector('a.anchorjs-link');
-      if (anchorLink) {
-        anchorLink.remove();
-      }
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(note);
-      }
-      // TODO in 1.5, we should make sure this works without a callout special case
-      if (note.classList.contains("callout")) {
-        return note.outerHTML;
-      } else {
-        return note.innerHTML;
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
       }
     }
-  }
-  for (var i=0; i<xrefs.length; i++) {
-    const xref = xrefs[i];
-    tippyHover(xref, undefined, function(instance) {
-      instance.disable();
-      let url = xref.getAttribute('href');
-      let hash = undefined; 
-      if (url.startsWith('#')) {
-        hash = url;
-      } else {
-        try { hash = new URL(url).hash; } catch {}
-      }
-      if (hash) {
-        const id = hash.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note !== null) {
-          try {
-            const html = processXRef(id, note.cloneNode(true));
-            instance.setContent(html);
-          } finally {
-            instance.enable();
-            instance.show();
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
           }
         } else {
-          // See if we can fetch this
-          fetch(url.split('#')[0])
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
           .then(res => res.text())
           .then(html => {
             const parser = new DOMParser();
             const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.getElementById(id);
+            const note = htmlDoc.querySelector('main.content');
             if (note !== null) {
-              const html = processXRef(id, note);
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
               instance.setContent(html);
             } 
           }).finally(() => {
@@ -31584,185 +31721,161 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             instance.show();
           });
         }
-      } else {
-        // See if we can fetch a full url (with no hash to target)
-        // This is a special case and we should probably do some content thinning / targeting
-        fetch(url)
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(html, "text/html");
-          const note = htmlDoc.querySelector('main.content');
-          if (note !== null) {
-            // This should only happen for chapter cross references
-            // (since there is no id in the URL)
-            // remove the first header
-            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-              note.children[0].remove();
-            }
-            const html = processXRef(null, note);
-            instance.setContent(html);
-          } 
-        }).finally(() => {
-          instance.enable();
-          instance.show();
-        });
-      }
-    }, function(instance) {
-    });
-  }
-      let selectedAnnoteEl;
-      const selectorForAnnotation = ( cell, annotation) => {
-        let cellAttr = 'data-code-cell="' + cell + '"';
-        let lineAttr = 'data-code-annotation="' +  annotation + '"';
-        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
-        return selector;
-      }
-      const selectCodeLines = (annoteEl) => {
-        const doc = window.document;
-        const targetCell = annoteEl.getAttribute("data-target-cell");
-        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
-        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
-        const lineIds = lines.map((line) => {
-          return targetCell + "-" + line;
-        })
-        let top = null;
-        let height = null;
-        let parent = null;
-        if (lineIds.length > 0) {
-            //compute the position of the single el (top and bottom and make a div)
-            const el = window.document.getElementById(lineIds[0]);
-            top = el.offsetTop;
-            height = el.offsetHeight;
-            parent = el.parentElement.parentElement;
-          if (lineIds.length > 1) {
-            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-            height = bottom - top;
-          }
-          if (top !== null && height !== null && parent !== null) {
-            // cook up a div (if necessary) and position it 
-            let div = window.document.getElementById("code-annotation-line-highlight");
-            if (div === null) {
-              div = window.document.createElement("div");
-              div.setAttribute("id", "code-annotation-line-highlight");
-              div.style.position = 'absolute';
-              parent.appendChild(div);
-            }
-            div.style.top = top - 2 + "px";
-            div.style.height = height + 4 + "px";
-            div.style.left = 0;
-            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-            if (gutterDiv === null) {
-              gutterDiv = window.document.createElement("div");
-              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-              gutterDiv.style.position = 'absolute';
-              const codeCell = window.document.getElementById(targetCell);
-              const gutter = codeCell.querySelector('.code-annotation-gutter');
-              gutter.appendChild(gutterDiv);
-            }
-            gutterDiv.style.top = top - 2 + "px";
-            gutterDiv.style.height = height + 4 + "px";
-          }
-          selectedAnnoteEl = annoteEl;
-        }
-      };
-      const unselectCodeLines = () => {
-        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
-        elementsIds.forEach((elId) => {
-          const div = window.document.getElementById(elId);
-          if (div) {
-            div.remove();
-          }
-        });
-        selectedAnnoteEl = undefined;
-      };
-        // Handle positioning of the toggle
-    window.addEventListener(
-      "resize",
-      throttle(() => {
-        elRect = undefined;
-        if (selectedAnnoteEl) {
-          selectCodeLines(selectedAnnoteEl);
-        }
-      }, 10)
-    );
-    function throttle(fn, ms) {
-    let throttle = false;
-    let timer;
-      return (...args) => {
-        if(!throttle) { // first call gets through
-            fn.apply(this, args);
-            throttle = true;
-        } else { // all the others get throttled
-            if(timer) clearTimeout(timer); // cancel #2
-            timer = setTimeout(() => {
-              fn.apply(this, args);
-              timer = throttle = false;
-            }, ms);
-        }
-      };
-    }
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
-          }
-        });
-      }
-  const findCites = (el) => {
-    const parentEl = el.parentElement;
-    if (parentEl) {
-      const cites = parentEl.dataset.cites;
-      if (cites) {
-        return {
-          el,
-          cites: cites.split(' ')
-        };
-      } else {
-        return findCites(el.parentElement)
-      }
-    } else {
-      return undefined;
-    }
-  };
-  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-  for (var i=0; i<bibliorefs.length; i++) {
-    const ref = bibliorefs[i];
-    const citeInfo = findCites(ref);
-    if (citeInfo) {
-      tippyHover(citeInfo.el, function() {
-        var popup = window.document.createElement('div');
-        citeInfo.cites.forEach(function(cite) {
-          var citeDiv = window.document.createElement('div');
-          citeDiv.classList.add('hanging-indent');
-          citeDiv.classList.add('csl-entry');
-          var biblioDiv = window.document.getElementById('ref-' + cite);
-          if (biblioDiv) {
-            citeDiv.innerHTML = biblioDiv.innerHTML;
-          }
-          popup.appendChild(citeDiv);
-        });
-        return popup.innerHTML;
+      }, function(instance) {
       });
     }
-  }
-});
-</script>
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
 </div> <!-- /content -->
 
 

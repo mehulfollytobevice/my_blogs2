@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.30">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Mehul Jain">
+<meta name="dcterms.date" content="2025-05-08">
+
+<title>The BERT Advantage- A Practical Guide to Modern Topic Modeling – Thoughts, Code and Mischief</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-de070a7b0ab54f8780927367ac907214.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-c1fac2584b48ed01fb6e278e36375074.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Thoughts, Code and Mischief</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../about.html"> 
+<span class="menu-text">Hi 👋, I’m Mehul</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/mehulfollytobevice"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">The BERT Advantage- A Practical Guide to Modern Topic Modeling</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">nlp</div>
+                <div class="quarto-category">machine_learning</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Mehul Jain </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">May 8, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction-the-text-analysis-challenge" id="toc-introduction-the-text-analysis-challenge" class="nav-link active" data-scroll-target="#introduction-the-text-analysis-challenge">Introduction: The Text Analysis Challenge</a></li>
+  <li><a href="#why-topic-modeling-matters" id="toc-why-topic-modeling-matters" class="nav-link" data-scroll-target="#why-topic-modeling-matters">Why Topic Modeling Matters</a></li>
+  <li><a href="#getting-started-with-the-dataset" id="toc-getting-started-with-the-dataset" class="nav-link" data-scroll-target="#getting-started-with-the-dataset">Getting Started with the Dataset</a></li>
+  <li><a href="#traditional-approach-lda-topic-modeling" id="toc-traditional-approach-lda-topic-modeling" class="nav-link" data-scroll-target="#traditional-approach-lda-topic-modeling">Traditional Approach: LDA Topic Modeling</a></li>
+  <li><a href="#upgrading-to-bertopic-modern-topic-modeling-with-transformers" id="toc-upgrading-to-bertopic-modern-topic-modeling-with-transformers" class="nav-link" data-scroll-target="#upgrading-to-bertopic-modern-topic-modeling-with-transformers">Upgrading to BERTopic: Modern Topic Modeling with Transformers</a></li>
+  <li><a href="#refining-the-topic-model" id="toc-refining-the-topic-model" class="nav-link" data-scroll-target="#refining-the-topic-model">Refining the Topic Model</a></li>
+  <li><a href="#model-evaluation" id="toc-model-evaluation" class="nav-link" data-scroll-target="#model-evaluation">Model Evaluation</a></li>
+  <li><a href="#visualization-and-insights" id="toc-visualization-and-insights" class="nav-link" data-scroll-target="#visualization-and-insights">Visualization and Insights</a></li>
+  <li><a href="#fine-tuning-topics-using-llms" id="toc-fine-tuning-topics-using-llms" class="nav-link" data-scroll-target="#fine-tuning-topics-using-llms">Fine-tuning topics using LLMs:</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion:</a></li>
+  <li><a href="#next-steps" id="toc-next-steps" class="nav-link" data-scroll-target="#next-steps">Next Steps:</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References:</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://images.unsplash.com/photo-1457369804613-52c61a468e7d?q=80&amp;w=1470&amp;auto=format&amp;fit=crop.png" class="img-fluid figure-img"></p>
+<figcaption>Photo by <a href="https://unsplash.com/@mvdheuvel?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">Maarten van den Heuvel</a> on <a href="https://unsplash.com/photos/assorted-color-book-lot-8EzNkvLQosk?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">Unsplash</a></figcaption>
+</figure>
+</div>
+<p>In an era characterized by multi-terabyte datasets and parameter-dense large language models, extracting meaningful insights from massive text corpora presents a formidable challenge for data scientists. While traditional probabilistic approaches such as Latent Dirichlet Allocation (LDA) have provided foundational capabilities, they exhibit inherent limitations in capturing the contextual semantics and hierarchical relationships within natural language. This article demonstrates how transformer-based topic modeling frameworks—specifically BERTopic with its contextualized embeddings and clustering mechanisms—can significantly enhance the results. My hope is to give data scientists practical guidelines and insights that seamlessly integrate with their existing topic modeling workflows. <strong>What’s the real magic?</strong> Transforming mountains of unstructured text into actionable business intelligence without getting bogged down in technical complexities.</p>
+<section id="introduction-the-text-analysis-challenge" class="level2">
+<h2 class="anchored" data-anchor-id="introduction-the-text-analysis-challenge">Introduction: The Text Analysis Challenge</h2>
+<p>Organizations today are drowning in text data. From customer feedback and support tickets to social media posts and internal documents, the sheer volume of unstructured text is overwhelming. How can we efficiently extract meaningful insights from thousands or millions of documents?</p>
+<p>Topic modeling offers a powerful solution—automatically organizing large text collections into coherent thematic clusters without requiring manual labeling. Rather than reading through endless documents, topic modeling algorithms quickly identify key subjects being discussed across your dataset.</p>
+<p>This article will compare two topic modeling approaches for analyzing customer support data: <a href="https://arxiv.org/pdf/2203.05794">BERTopic by Maarten Grootendorst (2022)</a> and the more traditional methods. BERTopic leverages BERT’s contextual embeddings to transform how we understand complex text relationships in multilingual environments. Using a real-world dataset, we’ll explore in Python code:</p>
+<ul>
+<li>how to create a LDA based topic model using gensim</li>
+<li>how to create a basic topic model using BERTopic</li>
+<li>how to improve/fine-tune the base topic model</li>
+<li>how to evaluate topic model using coherence score and PUW score</li>
+<li>how to visualize document clusters using BERTopic capabilities</li>
+<li>how to develop better topic representations using LLMs</li>
+</ul>
+</section>
+<section id="why-topic-modeling-matters" class="level2">
+<h2 class="anchored" data-anchor-id="why-topic-modeling-matters">Why Topic Modeling Matters</h2>
+<p>Before diving into implementation, let’s understand why topic modeling is so valuable in the current AI landscape:</p>
+<ol type="1">
+<li><p><strong>Extracting labels for supervised tasks</strong>: Most NLP projects in real-world scenarios are supervised classification tasks on unlabeled data. Topic modeling helps identify natural categories in unlabeled text data. These discovered topics can help develop labels for supervised classification tasks, saving time on manual annotation and providing a structured starting point for more complex analysis.</p></li>
+<li><p><strong>Guiding preprocessing decisions</strong>: As an exploratory tool, topic modeling reveals patterns in your data that can inform critical preprocessing choices. It helps identify important terms, unnecessary stop words, and potential biases in your dataset. Incorporating this information can significantly improve your preprocessing leading to better downstream model performance.</p></li>
+<li><p><strong>Uncovering temporal patterns</strong>: Topic modeling shows how themes in your data change over time. This reveals when new topics emerge, how existing topics evolve, and when topics fade away. This temporal view helps detect data drift and changing patterns. This can be very important if you have trained models on the earlier version of the dataset and want to preserve model performance.</p></li>
+<li><p><strong>Auditing pre-training data for LLMs</strong>: Nowadays, every company wants to train a foundation model. For LLMs, the quality of the dataset directly determines model quality. Some experts argue that data quality, not architectural differences, primarily distinguishes competing models. Topic modeling provides essential insights into what content your LLM will learn from, helping identify gaps, biases, or problematic content before training begins.</p></li>
+</ol>
+</section>
+<section id="getting-started-with-the-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="getting-started-with-the-dataset">Getting Started with the Dataset</h2>
+<p>For this demonstration, I’m using the <a href="https://www.kaggle.com/datasets/tobiasbueck/multilingual-customer-support-tickets">Customer IT Support - Ticket Dataset</a> from Kaggle, created by Tobias Bueck available under <a href="https://creativecommons.org/licenses/by/4.0/">Attribution 4.0 International (CC BY 4.0)</a>. This comprehensive dataset contains approximately 20,000 IT support tickets across multiple languages, providing an excellent foundation for our topic modeling exploration.</p>
+<p>For simplicity, I’ll focus analysis on English-language tickets, giving us a subset of approximately 10,000 support tickets to work with.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gensim</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> gensim <span class="im">import</span> corpora</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> spacy</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> bertopic <span class="im">import</span> BERTopic</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the dataset</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>PATH<span class="op">=</span> <span class="st">"data/Customer IT Support Ticket Dataset/dataset-tickets-multi-lang-4-20k.csv"</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(PATH)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter for English language rows</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>english_df <span class="op">=</span> df[df[<span class="st">'language'</span>] <span class="op">==</span> <span class="st">'en'</span>]</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare the text data by concatenating subject and body</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>english_df[<span class="st">'subject'</span>] <span class="op">=</span> english_df[<span class="st">'subject'</span>].fillna(<span class="st">''</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>english_df[<span class="st">'body'</span>] <span class="op">=</span> english_df[<span class="st">'body'</span>].fillna(<span class="st">''</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>english_df[<span class="st">'text'</span>] <span class="op">=</span> english_df[<span class="st">'subject'</span>] <span class="op">+</span> <span class="st">' '</span> <span class="op">+</span> english_df[<span class="st">'body'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Let’s understand what this code gives us: A preprocessed dataset of English IT support tickets, ready for topic modeling analysis.</p>
+</section>
+<section id="traditional-approach-lda-topic-modeling" class="level2">
+<h2 class="anchored" data-anchor-id="traditional-approach-lda-topic-modeling">Traditional Approach: LDA Topic Modeling</h2>
+<p>First, we will explore the traditional approach to topic modeling using Latent Dirichlet Allocation (LDA). This method has been the workhorse of topic modeling for years, so it provides a good baseline for comparison.</p>
+<p>To begin, we need to preprocess our text data with lemmatization and stop word removal:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load spaCy model for lemmatization</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>nlp <span class="op">=</span> spacy.load(<span class="st">'en_core_web_sm'</span>, disable<span class="op">=</span>[<span class="st">'parser'</span>, <span class="st">'ner'</span>])</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># data preprocessing using spacy</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> preprocess(texts):</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">    Tokenize and lemmatize text, removing stopwords</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    processed <span class="op">=</span> []</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> doc <span class="kw">in</span> nlp.pipe(texts):</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        tokens <span class="op">=</span> [</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>            token.lemma_.lower()</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> token <span class="kw">in</span> doc</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="kw">not</span> token.is_stop</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>            <span class="kw">and</span> token.is_alpha</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>            <span class="kw">and</span> <span class="bu">len</span>(token) <span class="op">&gt;</span> <span class="dv">2</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        ]</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        processed.append(tokens)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> processed</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Preprocess the text</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>texts <span class="op">=</span> preprocess(<span class="bu">list</span>(english_df[<span class="st">'text'</span>].values))</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Create dictionary and corpus</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>dictionary <span class="op">=</span> corpora.Dictionary(texts)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>corpus <span class="op">=</span> [dictionary.doc2bow(text) <span class="cf">for</span> text <span class="kw">in</span> texts]</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Build LDA model</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>lda_model <span class="op">=</span> gensim.models.LdaModel(</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    corpus<span class="op">=</span>corpus,</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    id2word<span class="op">=</span>dictionary,</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>    num_topics<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>    random_state<span class="op">=</span><span class="dv">100</span>,</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    passes<span class="op">=</span><span class="dv">15</span>,</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    alpha<span class="op">=</span><span class="st">'auto'</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Add topics to original dataframe</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_dominant_topic(bow):</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>    topics <span class="op">=</span> lda_model.get_document_topics(bow)</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">max</span>(topics, key<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="dv">1</span>])[<span class="dv">0</span>] <span class="cf">if</span> topics <span class="cf">else</span> <span class="op">-</span><span class="dv">1</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>english_df[<span class="st">'dominant_topic'</span>] <span class="op">=</span> [get_dominant_topic(doc) <span class="cf">for</span> doc <span class="kw">in</span> corpus]</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a><span class="co"># Display results</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Topics:"</span>)</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> idx, topic <span class="kw">in</span> lda_model.print_topics(<span class="op">-</span><span class="dv">1</span>):</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Topic </span><span class="sc">{</span>idx<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>topic<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>After examining the output, we found LDA identified 10 key topics, including:</p>
+<ul>
+<li>Medical security data protection</li>
+<li>Customer support and software issues</li>
+<li>Business intelligence, analytics and dashboards</li>
+<li>Digital brand strategy and marketing campaign</li>
+<li>Billing, subscriptions, and payments</li>
+<li>SaaS integration</li>
+</ul>
+<p>While these findings aligned with the tags in the dataset, the LDA approach revealed several critical limitations that impact its effectiveness for modern text analysis:</p>
+<ol type="1">
+<li><p><strong>Topic Redundancy and Overlap</strong>: Many discovered topics shared similar terms and themes, making it difficult to clearly distinguish between distinct subject areas. This redundancy reduces the model’s usefulness for content organization and insight generation.</p></li>
+<li><p><strong>Manual Topic Specification</strong>: Having to pre-specify the number of topics (k=10) requires domain expertise and multiple iterations to find the optimal number. This manual process is time-consuming and may not reflect the natural topic structure in the data.</p></li>
+<li><p><strong>Loss of Semantic Context</strong>: The bag-of-words approach treats each word independently, losing crucial word order and contextual relationships. For example, “data security” and “security data” would be treated identically, despite potentially different meanings.</p></li>
+<li><p><strong>Limited Semantic Coherence</strong>: Since LDA relies purely on word co-occurrence statistics, it often groups words that frequently appear together but may not be semantically related. This can lead to topics that are statistically valid but not interpretable from a business perspective.</p></li>
+<li><p><strong>Word Redundancy</strong>: The model tends to reuse the same high-frequency words across multiple topics, resulting in less distinctive topic representations and lower information value per topic.</p></li>
+</ol>
+<p>Let’s explore how BERTopic can transform our topic modeling results while addressing each of these limitations.</p>
+</section>
+<section id="upgrading-to-bertopic-modern-topic-modeling-with-transformers" class="level2">
+<h2 class="anchored" data-anchor-id="upgrading-to-bertopic-modern-topic-modeling-with-transformers">Upgrading to BERTopic: Modern Topic Modeling with Transformers</h2>
+<p>Enter BERTopic - a modern approach that leverages transformer-based models to address these exact challenges. By utilizing BERT’s contextual embeddings and advanced clustering techniques, BERTopic offers several key improvements:</p>
+<ul>
+<li>Automatic topic number detection</li>
+<li>Semantic understanding of word relationships</li>
+<li>Context-aware topic generation</li>
+<li>Reduced redundancy through better term differentiation</li>
+<li>More coherent and interpretable topics</li>
+</ul>
+<p>Learn exactly how BERTopic works <a href="https://maartengr.github.io/BERTopic/algorithm/algorithm.html#the-algorithm">here</a>.</p>
+<p>Ok! Let’s fit a basic model using the libraries default capabilities.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize and train BERTopic model</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>topic_model <span class="op">=</span> BERTopic()</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>topics, probs <span class="op">=</span> topic_model.fit_transform(english_df[<span class="st">'text'</span>].values)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Explore the topics found</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>explore_topics <span class="op">=</span> topic_model.get_topic_info()</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(explore_topics)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="topics_from_base_model.png" class="img-fluid figure-img"></p>
+<figcaption>Topics discovered by the base BERTopic model</figcaption>
+</figure>
+</div>
+<p>The results are impressive! BERTopic automatically discovered 170 distinct topics, with much richer semantic coherence. The largest topics included:</p>
+<ol type="1">
+<li><strong>Security and Data Protection</strong>: Focused on security concerns, unauthorized access, and data breaches (1,381 documents)</li>
+<li><strong>Marketing and Engagement</strong>: Multiple topics related to digital marketing, ad campaigns, and user engagement metrics</li>
+<li><strong>Technical Performance Issues</strong>: Topics dealing with system performance, loading delays, outages, and crash problems</li>
+<li><strong>Billing and Payments</strong>: Topics covering billing issues, invoice processing, and payment concerns</li>
+<li><strong>System Integration Challenges</strong>: Topics highlighting technical challenges around system integrations and platform connectivity.</li>
+</ol>
+<p>BERTopic’s initial results are impressive but we notice many micro-topics could be consolidated. To better understand the relationships between topics and identify potential merging opportunities, we can visualize the hierarchical structure using BERTopic’s built-in <code>visualize_hierarchy()</code> method. This generates a dendrogram showing how topics cluster together based on semantic similarity, making it easier to identify groups of related topics that could potentially be combined into broader, more meaningful categories.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="hierarchy_topics.png" class="img-fluid figure-img"></p>
+<figcaption>Hierarchical clustering of topics showing relationships between different themes</figcaption>
+</figure>
+</div>
+</section>
+<section id="refining-the-topic-model" class="level2">
+<h2 class="anchored" data-anchor-id="refining-the-topic-model">Refining the Topic Model</h2>
+<p>The base model using default parameters is a very good place to start. But, we can optimize it further in two key ways:</p>
+<ul>
+<li><p><strong>Controlling Topic Granularity with HDBSCAN</strong>: The default model produced 170 topics, with many showing significant overlap in themes and terminology. HDBSCAN, which handles the clustering step after BERT generates document embeddings, determines how documents are grouped into topics. By increasing HDBSCAN’s <code>min_cluster_size</code> parameter (e.g., from default to 50), we can force the algorithm to create larger, more inclusive clusters. This reduces redundancy by combining similar micro-topics into broader themes - for instance, merging separate topics about “password reset”, “login issues”, and “authentication problems” into a single comprehensive “authentication and access” topic.</p></li>
+<li><p><strong>Enhancing Topic Quality with N-grams</strong>: After clustering, BERTopic uses CountVectorizer to extract the most representative terms for each topic. The default CountVectorizer uses single words (unigrams) which can miss important multi-word concepts. By configuring CountVectorizer with <code>ngram_range=(1,3)</code> and adjusting <code>min_df</code>, we can capture meaningful phrases up to three words long. This means instead of seeing disconnected terms like “data”, “security”, and “breach”, we’ll get more contextual phrases like “data security breach”. These multi-word expressions provide richer, more interpretable topic representations that better reflect the actual content. CountVectorizer essentially acts as the final layer that transforms our clusters into human-readable topic descriptions.</p></li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> hdbscan <span class="im">import</span> HDBSCAN</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Configure HDBSCAN with a larger minimum cluster size</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>hdbscan_model <span class="op">=</span> HDBSCAN(min_cluster_size<span class="op">=</span><span class="dv">50</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                        metric<span class="op">=</span><span class="st">'euclidean'</span>, </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                        cluster_selection_method<span class="op">=</span><span class="st">'eom'</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                        prediction_data<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Create BERTopic model with custom HDBSCAN settings</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>topic_model <span class="op">=</span> BERTopic(hdbscan_model<span class="op">=</span>hdbscan_model)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>topics, probs <span class="op">=</span> topic_model.fit_transform(english_df[<span class="st">'text'</span>].values)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This adjustment reduced our topic count from 170 to a more manageable 36, while maintaining distinct and coherent topics.</p>
+<p>We can further improve topic representation by controlling the <code>CountVectorizer</code> parameters:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.feature_extraction.text <span class="im">import</span> CountVectorizer</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Configure CountVectorizer to improve topic representation</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>vectorizer_model <span class="op">=</span> CountVectorizer(stop_words<span class="op">=</span><span class="st">"english"</span>, min_df<span class="op">=</span><span class="dv">2</span>, ngram_range<span class="op">=</span>(<span class="dv">1</span>,<span class="dv">3</span>))</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a refined BERTopic model</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>topic_model <span class="op">=</span> BERTopic(vectorizer_model<span class="op">=</span>vectorizer_model,hdbscan_model<span class="op">=</span>hdbscan_model)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>topics, probs <span class="op">=</span> topic_model.fit_transform(english_df[<span class="st">'text'</span>].values)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The refined model provided more descriptive topic representations with multi-word phrases, making the topics even more interpretable.</p>
+</section>
+<section id="model-evaluation" class="level2">
+<h2 class="anchored" data-anchor-id="model-evaluation">Model Evaluation</h2>
+<p>Quantitative evaluation of topic models is crucial because topic modeling can be highly subjective and interpretations may vary between different analysts. Having concrete metrics helps establish objective benchmarks for model quality and enables meaningful comparisons between different modeling approaches. We will evaluate our topic model using two key quantitative metrics:</p>
+<ol type="1">
+<li><p><strong>Coherence Score</strong>: This metric measures how semantically similar the words within each topic are to each other. A higher coherence score indicates that the words in each topic are more likely to appear together in meaningful ways. Our model achieved a coherence score of 0.77 (on a scale of 0-1, the higher the better), indicating strong semantic coherence within topics and suggesting that our topics are capturing meaningful thematic relationships.</p></li>
+<li><p><strong>Percentage of Unique Words (PUW)</strong>: This metric assesses how distinct topics are from each other by measuring word overlap between topics. A higher PUW score means topics contain more unique words and are therefore more distinct. Our model achieved a PUW score of 60.57%, demonstrating good topic separation and minimal redundancy between topics.</p></li>
+</ol>
+<p>Let’s calculate these metrics for our refined model:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> gensim.models.coherencemodel <span class="im">import</span> CoherenceModel</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming you have already trained your BERTopic model</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># topic_model = BERTopic(n_gram_range=(1, 3))</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># topics, _ = topic_model.fit_transform(docs)</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Preprocess documents</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>cleaned_docs <span class="op">=</span> topic_model._preprocess_text(english_df[<span class="st">'text'</span>].values)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: Extract vectorizer and analyzer from BERTopic</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>vectorizer <span class="op">=</span> topic_model.vectorizer_model</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>analyzer <span class="op">=</span> vectorizer.build_analyzer()</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 3: Generate tokens</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>tokens <span class="op">=</span> [analyzer(doc) <span class="cf">for</span> doc <span class="kw">in</span> cleaned_docs]</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 4: Create dictionary and corpus</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>dictionary <span class="op">=</span> corpora.Dictionary(tokens)</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>corpus <span class="op">=</span> [dictionary.doc2bow(token) <span class="cf">for</span> token <span class="kw">in</span> tokens]</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 5: Extract topic words</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>topics_dict <span class="op">=</span> topic_model.get_topics()</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>topics_dict.pop(<span class="op">-</span><span class="dv">1</span>, <span class="va">None</span>)  <span class="co"># Remove outlier topic (-1)</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>topic_words <span class="op">=</span> [[words <span class="cf">for</span> words, _ <span class="kw">in</span> topic_model.get_topic(topic)] </span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>               <span class="cf">for</span> topic <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(<span class="bu">set</span>(topics))<span class="op">-</span><span class="dv">1</span>)]</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 6: Calculate coherence</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>coherence_model <span class="op">=</span> CoherenceModel(</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    topics<span class="op">=</span>topic_words,</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    texts<span class="op">=</span>tokens,</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    corpus<span class="op">=</span>corpus,</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    dictionary<span class="op">=</span>dictionary,</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    coherence<span class="op">=</span><span class="st">'c_v'</span>  <span class="co"># You can also use 'u_mass', 'c_uci', 'c_npmi'</span></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>coherence_score <span class="op">=</span> coherence_model.get_coherence()</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Coherence Score: </span><span class="sc">{</span>coherence_score<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Next, let’s calculate the PUW score.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calculate_puw_score(topic_model):</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Calculate the Percentage of Unique Words (PUW) score for a BERTopic model.</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Parameters:</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">    -----------</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">    topic_model : BERTopic model</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">        The trained BERTopic model</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">    --------</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co">    float</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">        The PUW score (percentage of unique words across all topics)</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Get all topics except the outlier topic (-1)</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    topics_dict <span class="op">=</span> topic_model.get_topics()</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">-</span><span class="dv">1</span> <span class="kw">in</span> topics_dict:</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>        topics_dict.pop(<span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Extract words from each topic (typically top N words)</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    all_words <span class="op">=</span> []</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> topic_id, topic_info <span class="kw">in</span> topics_dict.items():</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Each topic_info is a list of (word, score) tuples</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>        words <span class="op">=</span> [word <span class="cf">for</span> word, _ <span class="kw">in</span> topic_info]</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>        all_words.extend(words)</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Calculate the number of unique words</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    unique_words <span class="op">=</span> <span class="bu">set</span>(all_words)</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Calculate the percentage of unique words</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(all_words) <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="fl">0.0</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>    puw_score <span class="op">=</span> (<span class="bu">len</span>(unique_words) <span class="op">/</span> <span class="bu">len</span>(all_words)) <span class="op">*</span> <span class="dv">100</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> puw_score</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate PUW score</span></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>puw_score <span class="op">=</span> calculate_puw_score(topic_model)</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Percentage of Unique Words (PUW) Score: </span><span class="sc">{</span>puw_score<span class="sc">:.2f}</span><span class="ss">%"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="visualization-and-insights" class="level2">
+<h2 class="anchored" data-anchor-id="visualization-and-insights">Visualization and Insights</h2>
+<p>BERTopic offers robust visualization capabilities that help us understand and interpret the discovered topics. In this section, we’ll explore two powerful visualization methods that provide different perspectives on our topic model results:</p>
+<ol type="1">
+<li><p><code>visualize_documents()</code>: This powerful visualization method creates an interactive 2D or 3D plot where each point represents a document, colored by its assigned topic. The spatial relationships between points reflect semantic similarity - documents discussing similar themes appear closer together. This visualization is invaluable for:</p>
+<ul>
+<li>Identifying natural document clusters and topic boundaries</li>
+<li>Spotting outliers or misclassified documents</li>
+<li>Understanding topic overlap and relationships</li>
+<li>Validating the coherence of discovered topics visually</li>
+</ul></li>
+</ol>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sentence_transformers <span class="im">import</span> SentenceTransformer</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> bertopic <span class="im">import</span> BERTopic</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> umap <span class="im">import</span> UMAP</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare embeddings</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>sentence_model <span class="op">=</span> SentenceTransformer(<span class="st">"all-MiniLM-L6-v2"</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>embeddings <span class="op">=</span> sentence_model.encode(english_df[<span class="st">'text'</span>].values, show_progress_bar<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Train BERTopic</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>topic_model <span class="op">=</span> BERTopic(vectorizer_model<span class="op">=</span>vectorizer_model,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>                hdbscan_model<span class="op">=</span>hdbscan_model).fit(english_df[<span class="st">'text'</span>].values,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>                                                embeddings)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the visualization with the original embeddings</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>topic_model.visualize_documents(english_df[<span class="st">'text'</span>].values, embeddings<span class="op">=</span>embeddings)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="visualize_docs.png" class="img-fluid figure-img"></p>
+<figcaption>Visualization showing how topics are spatially distributed</figcaption>
+</figure>
+</div>
+<ol start="2" type="1">
+<li><p><code>visualize_approximate_distribution()</code>: This visualization method provides a detailed view of how topics are distributed within individual documents. It creates an interactive bar chart showing:</p>
+<ul>
+<li>Token-level topic assignments, revealing which parts of the text contribute to each topic</li>
+<li>Color-coded segments that help identify dominant themes and topic transitions</li>
+<li>Detecting subtle thematic shifts within documents</li>
+</ul></li>
+</ol>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the topic distributions on a token-level</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>topic_distr, topic_token_distr <span class="op">=</span> topic_model.approximate_distribution(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                                    english_df[<span class="st">'text'</span>].values, calculate_tokens<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize the token-level distributions</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> topic_model.visualize_approximate_distribution(english_df[<span class="st">'text'</span>].values[<span class="dv">1</span>],</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>                                                     topic_token_distr[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="topic_distribution.png" class="img-fluid figure-img"></p>
+<figcaption>Topic distribution within a document showing how different parts contribute to various topics</figcaption>
+</figure>
+</div>
+</section>
+<section id="fine-tuning-topics-using-llms" class="level2">
+<h2 class="anchored" data-anchor-id="fine-tuning-topics-using-llms">Fine-tuning topics using LLMs:</h2>
+<p>Ok, everything is all set and done! We have a good topic model, but it’s still challenging to understand what each topic truly represents. Lucky for us, BERTopic has an amazing functionality that allows us to fine-tune topics using LLMs like GPT-3.5, transforming cryptic word clusters into clear, meaningful topic descriptions. Here’s how it works:</p>
+<ol type="1">
+<li>BERTopic extracts key terms and sample documents from each topic</li>
+<li>These representative samples are sent to an LLM</li>
+<li>The LLM generates human-readable topic labels and descriptions</li>
+</ol>
+<p>This approach is highly efficient since you only need to process a small subset of documents with the LLM, not your entire dataset. This saves time and reduces API costs significantly.</p>
+<p>The real power lies in customization - you can craft specific prompts to generate exactly what you need:</p>
+<ul>
+<li>Concise topic labels</li>
+<li>Detailed summaries</li>
+<li>Creative descriptions</li>
+<li>Domain-specific interpretations</li>
+</ul>
+<p>This combines the statistical strength of BERTopic with the linguistic capabilities of LLMs for superior topic modeling results.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openai</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tiktoken</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> bertopic.representation <span class="im">import</span> OpenAI</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Tokenizer</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>tokenizer<span class="op">=</span> tiktoken.encoding_for_model(<span class="st">"gpt-3.5-turbo"</span>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize vectorizer model</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>vectorizer_model <span class="op">=</span> CountVectorizer(stop_words<span class="op">=</span><span class="st">"english"</span>, min_df<span class="op">=</span><span class="dv">2</span>, ngram_range<span class="op">=</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize HDBSCAN model</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>hdbscan_model <span class="op">=</span> HDBSCAN(min_cluster_size<span class="op">=</span><span class="dv">50</span>, metric<span class="op">=</span><span class="st">'euclidean'</span>,</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>                         cluster_selection_method<span class="op">=</span><span class="st">'eom'</span>, prediction_data<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Create your representation model</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>client <span class="op">=</span> openai.OpenAI(api_key<span class="op">=</span> <span class="st">"sk-proj-..."</span>)</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>representation_model <span class="op">=</span> OpenAI(</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    client,</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    model<span class="op">=</span><span class="st">"gpt-3.5-turbo"</span>,</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    delay_in_seconds<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    chat<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    nr_docs<span class="op">=</span><span class="dv">4</span>,</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>    doc_length<span class="op">=</span><span class="dv">100</span>,</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>    tokenizer<span class="op">=</span>tokenizer</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the representation model in BERTopic on top of the default pipeline</span></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>topic_model <span class="op">=</span> BERTopic(representation_model<span class="op">=</span>representation_model,</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>                        vectorizer_model<span class="op">=</span>vectorizer_model,</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>                        hdbscan_model<span class="op">=</span>hdbscan_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="fine_tune_topics.png" class="img-fluid figure-img"></p>
+<figcaption>Fine-tuned topic representations using GPT-3.5</figcaption>
+</figure>
+</div>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion:</h2>
+<p>Beyond the technical details, BERTopic represents a significant leap forward in how we make sense of text data. By combining the language understanding capabilities of large language models with efficient topic modeling, organizations can now extract meaningful insights from vast collections of documents without drowning in complexity. Imagine a healthcare provider quickly identifying emerging patient concerns from thousands of feedback forms, or a media company tracking how public discourse around climate change has evolved over the past decade. These practical applications translate directly to better decision-making and more responsive organizations.</p>
+<p>Whether or not LLMs eventually lead to AGI, they’ve already gifted us with powerful tools to analyze massive text collections and drive scalable decisions. As data increasingly permeates all software, topic modeling techniques like BERTopic become crucial for uncovering hidden patterns, biases, and insights within our data. This shift encourages more data-driven approaches rather than simply pursuing more complex models—ultimately leading to more robust, transparent systems that can truly help organizations transform overwhelming amounts of unstructured text into clear, strategic insights.</p>
+</section>
+<section id="next-steps" class="level2">
+<h2 class="anchored" data-anchor-id="next-steps">Next Steps:</h2>
+<p>To further enhance this topic modeling approach, consider:</p>
+<ol type="1">
+<li>Exploring temporal topic evolution over time.</li>
+<li>Adding guided topic modeling to incorporate domain knowledge.</li>
+<li>Integrating with downstream classification tasks.</li>
+<li>Applying to multilingual analysis (BERTopic supports multiple languages).</li>
+</ol>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References:</h2>
+<p>[1] M. Grootendorst, BERTopic: Neural topic modeling with a class-based TF-IDF procedure (2022), arXiv:2203.05794. <a href="https://arxiv.org/pdf/2203.05794">https://arxiv.org/pdf/2203.05794</a></p>
+<p>[2] D. M. Blei, A. Y. Ng, and M. I. Jordan, Latent dirichlet allocation (2003), Journal of machine Learning research, 3(Jan), 993-1022. <a href="https://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf">https://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf</a></p>
+<p>[3] J. Devlin, M. W. Chang, K. Lee, and K. Toutanova, BERT: Pre-training of deep bidirectional transformers for language understanding (2018), arXiv:1810.04805. <a href="https://arxiv.org/abs/1810.04805">https://arxiv.org/abs/1810.04805</a></p>
+<p>[4] L. McInnes, J. Healy, and S. Astels, hdbscan: Hierarchical density based clustering (2017), Journal of Open Source Software, 2(11), 205. <a href="https://joss.theoj.org/papers/10.21105/joss.00205">https://joss.theoj.org/papers/10.21105/joss.00205</a></p>
+<p>[5] R. J. Campello, D. Moulavi, and J. Sander, Density-based clustering based on hierarchical density estimates (2013), Pacific-Asia Conference on Knowledge Discovery and Data Mining, 160-172. <a href="https://link.springer.com/chapter/10.1007/978-3-642-37456-2_14">https://link.springer.com/chapter/10.1007/978-3-642-37456-2_14</a></p>
+<p>[6] T. Bueck, Customer IT Support - Ticket Dataset (2023), Kaggle. <a href="https://www.kaggle.com/datasets/tobiasbueck/multilingual-customer-support-tickets">https://www.kaggle.com/datasets/tobiasbueck/multilingual-customer-support-tickets</a></p>
+<p>[7] M. Röder, A. Both, and A. Hinneburg, Exploring the space of topic coherence measures (2015), Proceedings of the Eighth ACM International Conference on Web Search and Data Mining, 399-408. <a href="https://dl.acm.org/doi/10.1145/2684822.2685324">https://dl.acm.org/doi/10.1145/2684822.2685324</a></p>
+<p>[8] S. Kapadia, Understanding Topic Coherence Measures (2019), Towards Data Science. <a href="https://towardsdatascience.com/understanding-topic-coherence-measures-4aa41339634c/">https://towardsdatascience.com/understanding-topic-coherence-measures-4aa41339634c/</a></p>
+<p>[9] S. Kapadia, Choose the Right One: Evaluating Topic Models for Business Intelligence (2022), Towards Data Science. <a href="https://towardsdatascience.com/choose-the-right-one-evaluating-topic-models-for-business-intelligence/">https://towardsdatascience.com/choose-the-right-one-evaluating-topic-models-for-business-intelligence/</a></p>
+<p>[10] R. Řehůřek, Gensim Tutorial Examples. Gensim: Topic Modelling for Humans (2023). <a href="https://radimrehurek.com/gensim/auto_examples/index.html">https://radimrehurek.com/gensim/auto_examples/index.html</a></p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/mehulfollytobevice\.github\.io\/my_blogs2\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
