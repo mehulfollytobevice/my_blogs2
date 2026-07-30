@@ -2,9 +2,58 @@
   {
     "objectID": "about.html",
     "href": "about.html",
-    "title": "Hi 👋, I’m Mehul",
+    "title": "About",
     "section": "",
-    "text": "Welcome to Thoughts, Code and Mischief. A place to find interesting stuff on AI, ML and life.\n\nAbout me:\nI am a perpetual learner on a journey through the known and unknown lands of machine learning, data science and natural language processing. Currently, I am a graduate student at Northeastern University, Boston pursuing my master’s degree in data science. I completed my undergraduate degree in Computer Science and Engineering from Vellore Institute of Technology, Vellore. In the past, I have worked on multiple research papers and projects tackling problems in the domains of ML, DL and NLP. I aspire to become a successful data scientist and create data driven solutions for solving problems at a global scale."
+    "text": "Data Scientist · NLP & Marketing Science\n\n\nLinkedIn Github\n\nWelcome to Thoughts, Code and Mischief — a corner of the internet where I write about AI, machine learning, and the occasional detour into life.\n\n\n\n\nI’m a Data Scientist who gets excited when patterns in messy data turn into decisions someone can actually act on. I build NLP systems, predictive models, and marketing science pipelines — the kind of work where a good model isn’t the finish line; it’s the start of a smarter conversation.\n\n\n\nMy fascination with data started when I realized that numbers aren’t abstract — they tell stories about people, behavior, and innovation. That curiosity led me to Data Science at Northeastern University, where I learned to love the gap between a raw dataset and something that changes how a team operates.\nBefore grad school, I studied Computer Science at VIT, Vellore, and spent time on research and projects across ML, deep learning, and NLP. Those early experiments taught me something I still carry: the best technical work is useless if you can’t explain why it matters.\n\n\n\nToday I focus on NLP, predictive analytics, and marketing science — systems that need to be rigorous and usable.\nAt Universal Music Group and Flynn Group, I’ve worked on:\n\nBayesian marketing mix models (MMMs) to understand what actually drives ROI\nRevenue forecasting systems that help teams plan with confidence instead of guesswork\nSentiment analysis platforms that turn unstructured text into actionable signals\n\nThe through-line: connect technical precision to strategic goals, and make sure the output lands with the people who need it.\n\n\n\n\nTensorFlow PyTorch Scikit-learn Airflow MLflow Cloud pipelines\n\nI’m most at home when a model moves from notebook experiment to something that runs reliably at scale.\n\n\n\nI’m excited about roles like Machine Learning Engineer, Applied Scientist, or Data Science Lead — places where I can keep building intelligent systems that merge data and strategy into measurable results.\n\n\n\nWhen I’m not tuning models or wrangling pipelines, you’ll find me behind a drum kit or playing the Indian classical flute. Different kind of pattern recognition — but the rhythm helps.\n\n\n\nIf you’re interested in AI innovation, NLP systems, or machine learning that turns data into business value, I’d love to reach out on LinkedIn."
+  },
+  {
+    "objectID": "about.html#the-short-version",
+    "href": "about.html#the-short-version",
+    "title": "About",
+    "section": "",
+    "text": "I’m a Data Scientist who gets excited when patterns in messy data turn into decisions someone can actually act on. I build NLP systems, predictive models, and marketing science pipelines — the kind of work where a good model isn’t the finish line; it’s the start of a smarter conversation."
+  },
+  {
+    "objectID": "about.html#how-i-got-here",
+    "href": "about.html#how-i-got-here",
+    "title": "About",
+    "section": "",
+    "text": "My fascination with data started when I realized that numbers aren’t abstract — they tell stories about people, behavior, and innovation. That curiosity led me to Data Science at Northeastern University, where I learned to love the gap between a raw dataset and something that changes how a team operates.\nBefore grad school, I studied Computer Science at VIT, Vellore, and spent time on research and projects across ML, deep learning, and NLP. Those early experiments taught me something I still carry: the best technical work is useless if you can’t explain why it matters."
+  },
+  {
+    "objectID": "about.html#what-i-build",
+    "href": "about.html#what-i-build",
+    "title": "About",
+    "section": "",
+    "text": "Today I focus on NLP, predictive analytics, and marketing science — systems that need to be rigorous and usable.\nAt Universal Music Group and Flynn Group, I’ve worked on:\n\nBayesian marketing mix models (MMMs) to understand what actually drives ROI\nRevenue forecasting systems that help teams plan with confidence instead of guesswork\nSentiment analysis platforms that turn unstructured text into actionable signals\n\nThe through-line: connect technical precision to strategic goals, and make sure the output lands with the people who need it."
+  },
+  {
+    "objectID": "about.html#tools-i-reach-for",
+    "href": "about.html#tools-i-reach-for",
+    "title": "About",
+    "section": "",
+    "text": "TensorFlow PyTorch Scikit-learn Airflow MLflow Cloud pipelines\n\nI’m most at home when a model moves from notebook experiment to something that runs reliably at scale."
+  },
+  {
+    "objectID": "about.html#what-im-looking-for",
+    "href": "about.html#what-im-looking-for",
+    "title": "About",
+    "section": "",
+    "text": "I’m excited about roles like Machine Learning Engineer, Applied Scientist, or Data Science Lead — places where I can keep building intelligent systems that merge data and strategy into measurable results."
+  },
+  {
+    "objectID": "about.html#outside-the-code",
+    "href": "about.html#outside-the-code",
+    "title": "About",
+    "section": "",
+    "text": "When I’m not tuning models or wrangling pipelines, you’ll find me behind a drum kit or playing the Indian classical flute. Different kind of pattern recognition — but the rhythm helps."
+  },
+  {
+    "objectID": "about.html#lets-connect",
+    "href": "about.html#lets-connect",
+    "title": "About",
+    "section": "",
+    "text": "If you’re interested in AI innovation, NLP systems, or machine learning that turns data into business value, I’d love to reach out on LinkedIn."
   },
   {
     "objectID": "posts/2024-05-15-pricealchemy.html",
