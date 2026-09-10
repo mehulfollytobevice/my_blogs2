@@ -4,42 +4,42 @@
     "href": "about.html",
     "title": "About",
     "section": "",
-    "text": "Data Scientist · NLP & Marketing Science\n\n\nLinkedIn Github\n\nWelcome to Thoughts, Code and Mischief — a corner of the internet where I write about AI, machine learning, and the occasional detour into life.\n\n\n\n\nI’m a Data Scientist who gets excited when patterns in messy data turn into decisions someone can actually act on. I build NLP systems, predictive models, and marketing science pipelines — the kind of work where a good model isn’t the finish line; it’s the start of a smarter conversation.\n\n\n\nMy fascination with data started when I realized that numbers aren’t abstract — they tell stories about people, behavior, and innovation. That curiosity led me to Data Science at Northeastern University, where I learned to love the gap between a raw dataset and something that changes how a team operates.\nBefore grad school, I studied Computer Science at VIT, Vellore, and spent time on research and projects across ML, deep learning, and NLP. Those early experiments taught me something I still carry: the best technical work is useless if you can’t explain why it matters.\n\n\n\nToday I focus on NLP, predictive analytics, and marketing science — systems that need to be rigorous and usable.\nAt Universal Music Group and Flynn Group, I’ve worked on:\n\nBayesian marketing mix models (MMMs) to understand what actually drives ROI\nRevenue forecasting systems that help teams plan with confidence instead of guesswork\nSentiment analysis platforms that turn unstructured text into actionable signals\n\nThe through-line: connect technical precision to strategic goals, and make sure the output lands with the people who need it.\n\n\n\n\nTensorFlow PyTorch Scikit-learn Airflow MLflow Cloud pipelines\n\nI’m most at home when a model moves from notebook experiment to something that runs reliably at scale.\n\n\n\nI’m excited about roles like Machine Learning Engineer, Applied Scientist, or Data Science Lead — places where I can keep building intelligent systems that merge data and strategy into measurable results.\n\n\n\nWhen I’m not tuning models or wrangling pipelines, you’ll find me behind a drum kit or playing the Indian classical flute. Different kind of pattern recognition — but the rhythm helps.\n\n\n\nIf you’re interested in AI innovation, NLP systems, or machine learning that turns data into business value, I’d love to reach out on LinkedIn."
+    "text": "Data Scientist · Bayesian Modeling · Forecasting · NLP · Agentic AI\n\n\nLinkedIn Github\n\nWelcome to Thoughts, Code and Mischief — a corner of the internet where I write about applied modeling, machine learning, and the occasional detour into life.\n\n\n\n\nI’m a Data Scientist who builds models that hold up under uncertainty and actually get used. My work sits at the intersection of applied Bayesian modeling, time series forecasting, NLP, and agentic AI — the kind of systems where a good estimate isn’t the finish line; it’s the start of a better decision.\n\n\n\nMy fascination with data started when I realized that numbers aren’t abstract — they tell stories about systems, behavior, and what might happen next. That curiosity led me to Data Science at Northeastern University, where I learned to love the gap between a raw dataset and something that changes how a team operates.\nBefore grad school, I studied Computer Science at VIT, Vellore, and spent time on research and projects across ML, deep learning, and NLP. Those early experiments taught me something I still carry: the best technical work is useless if you can’t explain why it matters.\n\n\n\nFour areas show up again and again in my work:\n\nApplied Bayesian modeling — hierarchical models, causal attribution, and posterior inference when you need uncertainty, not just a point estimate\nTime series forecasting — demand, revenue, and operational forecasts that teams can plan against\nNLP — turning unstructured text into structure: topic models, sentiment, retrieval, and document intelligence\nAgentic AI — LLM systems that retrieve, reason, and take steps in a workflow, not just generate text\n\nAt Universal Music Group and Flynn Group, that has looked like Bayesian mix models to isolate what actually drives outcomes, revenue forecasting systems that replace guesswork with calibrated predictions, and NLP platforms that turn large text streams into signals people can act on. Alongside that, I build retrieval-augmented and agentic tools — including an in-house RAG system for data science teams — so models live inside real workflows.\nThe through-line: connect statistical rigor to the decision in front of someone, and ship it so it stays reliable.\n\n\n\n\nPyMC / Bayesian inference Time series & forecasting PyTorch Scikit-learn NLP & LLMs RAG & agents Airflow MLflow Cloud pipelines\n\nI’m most at home when a model moves from notebook experiment to something that runs reliably at scale.\n\n\n\nI’m excited about Applied Scientist, Machine Learning Engineer, and Data Science roles where probabilistic modeling, forecasting, language systems, or agentic workflows are core to the problem — and where the output has to be both rigorous and usable.\n\n\n\nWhen I’m not tuning models or wrangling pipelines, you’ll find me behind a drum kit or playing the Indian classical flute. Different kind of pattern recognition — but the rhythm helps.\n\n\n\nIf you’re hiring for Bayesian modeling, forecasting, NLP, or applied AI systems — or you just want to talk shop — reach out on LinkedIn."
   },
   {
     "objectID": "about.html#the-short-version",
     "href": "about.html#the-short-version",
     "title": "About",
     "section": "",
-    "text": "I’m a Data Scientist who gets excited when patterns in messy data turn into decisions someone can actually act on. I build NLP systems, predictive models, and marketing science pipelines — the kind of work where a good model isn’t the finish line; it’s the start of a smarter conversation."
+    "text": "I’m a Data Scientist who builds models that hold up under uncertainty and actually get used. My work sits at the intersection of applied Bayesian modeling, time series forecasting, NLP, and agentic AI — the kind of systems where a good estimate isn’t the finish line; it’s the start of a better decision."
   },
   {
     "objectID": "about.html#how-i-got-here",
     "href": "about.html#how-i-got-here",
     "title": "About",
     "section": "",
-    "text": "My fascination with data started when I realized that numbers aren’t abstract — they tell stories about people, behavior, and innovation. That curiosity led me to Data Science at Northeastern University, where I learned to love the gap between a raw dataset and something that changes how a team operates.\nBefore grad school, I studied Computer Science at VIT, Vellore, and spent time on research and projects across ML, deep learning, and NLP. Those early experiments taught me something I still carry: the best technical work is useless if you can’t explain why it matters."
+    "text": "My fascination with data started when I realized that numbers aren’t abstract — they tell stories about systems, behavior, and what might happen next. That curiosity led me to Data Science at Northeastern University, where I learned to love the gap between a raw dataset and something that changes how a team operates.\nBefore grad school, I studied Computer Science at VIT, Vellore, and spent time on research and projects across ML, deep learning, and NLP. Those early experiments taught me something I still carry: the best technical work is useless if you can’t explain why it matters."
   },
   {
-    "objectID": "about.html#what-i-build",
-    "href": "about.html#what-i-build",
+    "objectID": "about.html#what-i-work-on",
+    "href": "about.html#what-i-work-on",
     "title": "About",
     "section": "",
-    "text": "Today I focus on NLP, predictive analytics, and marketing science — systems that need to be rigorous and usable.\nAt Universal Music Group and Flynn Group, I’ve worked on:\n\nBayesian marketing mix models (MMMs) to understand what actually drives ROI\nRevenue forecasting systems that help teams plan with confidence instead of guesswork\nSentiment analysis platforms that turn unstructured text into actionable signals\n\nThe through-line: connect technical precision to strategic goals, and make sure the output lands with the people who need it."
+    "text": "Four areas show up again and again in my work:\n\nApplied Bayesian modeling — hierarchical models, causal attribution, and posterior inference when you need uncertainty, not just a point estimate\nTime series forecasting — demand, revenue, and operational forecasts that teams can plan against\nNLP — turning unstructured text into structure: topic models, sentiment, retrieval, and document intelligence\nAgentic AI — LLM systems that retrieve, reason, and take steps in a workflow, not just generate text\n\nAt Universal Music Group and Flynn Group, that has looked like Bayesian mix models to isolate what actually drives outcomes, revenue forecasting systems that replace guesswork with calibrated predictions, and NLP platforms that turn large text streams into signals people can act on. Alongside that, I build retrieval-augmented and agentic tools — including an in-house RAG system for data science teams — so models live inside real workflows.\nThe through-line: connect statistical rigor to the decision in front of someone, and ship it so it stays reliable."
   },
   {
     "objectID": "about.html#tools-i-reach-for",
     "href": "about.html#tools-i-reach-for",
     "title": "About",
     "section": "",
-    "text": "TensorFlow PyTorch Scikit-learn Airflow MLflow Cloud pipelines\n\nI’m most at home when a model moves from notebook experiment to something that runs reliably at scale."
+    "text": "PyMC / Bayesian inference Time series & forecasting PyTorch Scikit-learn NLP & LLMs RAG & agents Airflow MLflow Cloud pipelines\n\nI’m most at home when a model moves from notebook experiment to something that runs reliably at scale."
   },
   {
     "objectID": "about.html#what-im-looking-for",
     "href": "about.html#what-im-looking-for",
     "title": "About",
     "section": "",
-    "text": "I’m excited about roles like Machine Learning Engineer, Applied Scientist, or Data Science Lead — places where I can keep building intelligent systems that merge data and strategy into measurable results."
+    "text": "I’m excited about Applied Scientist, Machine Learning Engineer, and Data Science roles where probabilistic modeling, forecasting, language systems, or agentic workflows are core to the problem — and where the output has to be both rigorous and usable."
   },
   {
     "objectID": "about.html#outside-the-code",
@@ -53,7 +53,7 @@
     "href": "about.html#lets-connect",
     "title": "About",
     "section": "",
-    "text": "If you’re interested in AI innovation, NLP systems, or machine learning that turns data into business value, I’d love to reach out on LinkedIn."
+    "text": "If you’re hiring for Bayesian modeling, forecasting, NLP, or applied AI systems — or you just want to talk shop — reach out on LinkedIn."
   },
   {
     "objectID": "posts/2024-05-15-pricealchemy.html",
